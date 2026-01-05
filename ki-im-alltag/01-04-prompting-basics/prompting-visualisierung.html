@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prompt Engineering - Unser Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-deep: #020617;
+            --accent-blue: #3b82f6;
+            --accent-amber: #f59e0b;
+            --accent-emerald: #10b981;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --dashboard-bg: #1e293b;
+            --anim-speed: 0.5s;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            touch-action: none;
+            user-select: none;
+        }
+
+        #presentation-container {
+            position: relative;
+            flex-grow: 1;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            padding: 2rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-deep);
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            z-index: 20;
+        }
+
+        /* Animations-Engine für Folienwechsel */
+        .slide-in-right {
+            animation: slideInRight var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: flex;
+            z-index: 30;
+        }
+
+        .slide-out-left {
+            animation: slideOutLeft var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: flex;
+            z-index: 10;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: flex;
+            z-index: 30;
+        }
+
+        .slide-out-right {
+            animation: slideOutRight var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: flex;
+            z-index: 10;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutLeft {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .title-bg {
+            background-image: linear-gradient(rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.95)),
+                url('https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .prompt-window {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--accent-blue);
+            margin-left: 4px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Navigation UI */
+        .nav-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .page-indicator {
+            border: 1px solid #475569;
+            border-radius: 9999px;
+            padding: 0.35rem 1.25rem;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .nav-btn {
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn.primary {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .check-square {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .ai-bubble {
+            background: #1e293b;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--accent-emerald);
+        }
+
+        /* Simulator Colors */
+        .component-tag.active[id*="-s"] {
+            background-color: var(--accent-blue);
+        }
+
+        .component-tag.active[id*="-a"] {
+            background-color: var(--accent-amber);
+        }
+
+        .component-tag.active[id*="-n"] {
+            background-color: var(--accent-emerald);
+        }
+
+        .component-tag.active[id*="-d"] {
+            background-color: var(--accent-purple);
+        }
+
+        .dot-pulse {
+            position: relative;
+            left: -9999px;
+            width: 6px;
+            height: 6px;
+            border-radius: 5px;
+            background-color: var(--accent-blue);
+            box-shadow: 9999px 0 0 0 var(--accent-blue);
+            animation: dot-pulse 1.5s infinite linear;
+        }
+
+        @keyframes dot-pulse {
+            0% {
+                box-shadow: 9999px 0 0 -5px var(--accent-blue);
+            }
+
+            30% {
+                box-shadow: 9999px 0 0 2px var(--accent-blue);
+            }
+
+            60%,
+            100% {
+                box-shadow: 9999px 0 0 -5px var(--accent-blue);
+            }
+        }
+
+        #p-result,
+        #ai-text,
+        #ai-hint-text {
+            font-style: normal !important;
+        }
+
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="copyToast"
+        class="fixed top-8 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full font-bold hidden z-[1000]">
+        Checkliste kopiert!</div>
+
+    <div id="presentation-container">
+
+        <!-- Slide 0: Titelfolie -->
+        <section id="slide-0" class="slide active title-bg">
+            <div class="text-center space-y-8 relative z-10 w-full max-w-4xl px-4">
+                <div class="space-y-4">
+                    <div class="inline-block p-5 bg-blue-600/20 rounded-[2rem] mb-2 border border-blue-500/20">
+                        <i class="fas fa-microchip text-5xl text-blue-500"></i>
+                    </div>
+                    <h1
+                        class="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 pb-8 leading-tight">
+                        Wir lernen Prompting
+                    </h1>
+                    <p class="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
+                        Wie wir gemeinsam die Kunst meistern, glasklare Anweisungen an die KI zu formulieren.
+                    </p>
+                </div>
+
+                <div
+                    class="prompt-window max-w-lg mx-auto p-8 rounded-[2.5rem] text-left shadow-2xl border border-white/5">
+                    <div class="flex gap-2 mb-4">
+                        <div class="w-3 h-3 rounded-full bg-red-500/40"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/40"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/40"></div>
+                    </div>
+                    <div class="text-slate-200 text-sm md:text-lg leading-relaxed">
+                        <span class="text-blue-400">wir:</span> Erkläre uns Prompting so einfach wie möglich<span
+                            class="cursor-blink"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 1: GIGO Prinzip -->
+        <section id="slide-1" class="slide">
+            <div class="w-full max-w-5xl px-4">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-bold">Das GIGO-Prinzip</h2>
+                    <p class="text-slate-400 mt-2 font-bold text-lg">GIGO = Garbage In, Garbage Out</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 items-stretch">
+                    <div
+                        class="bg-red-500/5 p-8 rounded-[2.5rem] border border-red-500/20 flex flex-col justify-between shadow-xl">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4 text-red-500">
+                                <i class="fas fa-trash-alt"></i>
+                                <h3 class="font-bold uppercase tracking-widest text-sm">GI - Garbage In (Müll rein)</h3>
+                            </div>
+                            <p class="text-slate-300 mb-6 font-medium">"Schreib mal was über das Wetter."</p>
+                        </div>
+                        <div class="border-t border-red-500/10 pt-6">
+                            <div class="flex items-center gap-3 mb-2 text-red-400">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider block">GO - Garbage Out
+                                    (Müll raus)</span>
+                            </div>
+                            <p class="text-sm text-slate-400 italic">"Gerne! Pack deine Badesachen ein, die Sonne
+                                brennt. Ach so, du bist in Island? Ups, ich dachte du meinst Mallorca!"</p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-emerald-500/5 p-8 rounded-[2.5rem] border border-emerald-500/20 flex flex-col justify-between shadow-xl">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4 text-emerald-500">
+                                <i class="fas fa-check-circle"></i>
+                                <h3 class="font-bold uppercase tracking-widest text-sm">Quality In (Systematik)</h3>
+                            </div>
+                            <p class="text-slate-300 mb-6 font-medium">"Handel als Meteorologe. Erkläre die aktuelle
+                                Regenfront für Laien in 2 Sätzen."</p>
+                        </div>
+                        <div class="border-t border-emerald-500/10 pt-6">
+                            <div class="flex items-center gap-3 mb-2 text-emerald-400">
+                                <i class="fas fa-bullseye"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider block">Quality Out
+                                    (Präzision)</span>
+                            </div>
+                            <p class="text-sm text-slate-400">"Tief 'Zoran' bringt feuchte Luftmassen, die an den Alpen
+                                aufsteigen. Stellen Sie sich auf anhaltenden Landregen ein."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Die SAND-Bausteine -->
+        <section id="slide-2" class="slide">
+            <div class="w-full max-w-6xl px-4">
+                <h2 class="text-2xl font-bold mb-10 text-center uppercase tracking-widest text-slate-500">SAND: Die 4
+                    Säulen des Prompts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="p-6 bg-blue-600 rounded-2xl text-center shadow-lg"><span
+                            class="block text-3xl font-black">S</span><span
+                            class="text-[10px] uppercase font-bold text-blue-100">Situation</span></div>
+                    <div class="p-6 bg-amber-600 rounded-2xl text-center shadow-lg"><span
+                            class="block text-3xl font-black">A</span><span
+                            class="text-[10px] uppercase font-bold text-amber-100">Aufgabe</span></div>
+                    <div class="p-6 bg-emerald-600 rounded-2xl text-center shadow-lg"><span
+                            class="block text-3xl font-black">N</span><span
+                            class="text-[10px] uppercase font-bold text-emerald-100">Nebenbedingung</span></div>
+                    <div class="p-6 bg-purple-600 rounded-2xl text-center shadow-lg"><span
+                            class="block text-3xl font-black">D</span><span
+                            class="text-[10px] uppercase font-bold text-purple-100">Darstellung</span></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-l-blue-600 shadow-md">
+                        <h4 class="font-bold text-blue-400 mb-1">Situation (S)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Wer ist die KI? (Rolle + Tonfall) und was ist
+                            der Hintergrund der Anfrage?</p>
+                    </div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-l-amber-600 shadow-md">
+                        <h4 class="font-bold text-amber-500 mb-1">Aufgabe (A)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Was soll die KI konkret tun? (Schreibe,
+                            Analysiere, Erstelle eine Gliederung).</p>
+                    </div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-l-emerald-600 shadow-md">
+                        <h4 class="font-bold text-emerald-500 mb-1">Nebenbedingungen (N)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Regeln & Grenzen: Wortanzahl, Tabu-Wörter,
+                            Zielgruppen-Vorgaben.</p>
+                    </div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-l-purple-600 shadow-md">
+                        <h4 class="font-bold text-purple-500 mb-1">Darstellung (D)</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Wie sieht der Output aus? (E-Mail, Tabelle,
+                            JSON, Markdown, Code).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: SAND-Kasten Simulator -->
+        <section id="slide-3" class="slide">
+            <div class="w-full max-w-4xl px-4">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold">Der interaktive SAND-Kasten</h2>
+                </div>
+
+                <div
+                    class="bg-slate-800/30 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl relative min-h-[580px] flex flex-col">
+                    <div class="flex flex-wrap gap-2 mb-8 justify-center shrink-0">
+                        <button onclick="toggleComp('s')" id="btn-s"
+                            class="component-tag px-6 py-2 bg-slate-900 rounded-full text-xs border border-slate-700 transition-all">+
+                            Situation</button>
+                        <button onclick="toggleComp('a')" id="btn-a"
+                            class="component-tag px-6 py-2 bg-slate-900 rounded-full text-xs border border-slate-700 transition-all">+
+                            Aufgabe</button>
+                        <button onclick="toggleComp('n')" id="btn-n"
+                            class="component-tag px-6 py-2 bg-slate-900 rounded-full text-xs border border-slate-700 transition-all">+
+                            Nebenbedingung</button>
+                        <button onclick="toggleComp('d')" id="btn-d"
+                            class="component-tag px-6 py-2 bg-slate-900 rounded-full text-xs border border-slate-700 transition-all">+
+                            Darstellung</button>
+                    </div>
+
+                    <div
+                        class="p-6 bg-slate-950 rounded-2xl min-h-[140px] flex items-center justify-between border border-white/5 shrink-0 shadow-inner">
+                        <div id="p-result" class="text-lg font-mono text-slate-400 flex-grow pr-4 leading-relaxed">
+                            verfasse eine nachricht für uns.
+                        </div>
+                        <button id="send-btn" onclick="sendPrompt()"
+                            class="w-12 h-12 flex-shrink-0 bg-blue-600 rounded-xl flex items-center justify-center text-white hover:bg-blue-500 transition-all active:scale-90 shadow-lg">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex-grow">
+                        <div id="ai-loading" class="hidden mt-4 flex justify-center items-center gap-3">
+                            <div class="dot-pulse"></div>
+                            <span class="text-[10px] text-blue-400 font-mono uppercase tracking-widest">KI generiert
+                                Antwort...</span>
+                        </div>
+                        <div id="ai-response" class="hidden ai-bubble shadow-xl">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-robot text-emerald-400 text-xs"></i>
+                                <span class="text-[10px] font-bold uppercase text-emerald-400 tracking-widest">Output
+                                    der KI</span>
+                            </div>
+                            <p id="ai-text" class="text-sm text-slate-200 leading-relaxed font-medium"></p>
+                        </div>
+                        <div id="ai-hint"
+                            class="hidden mt-4 p-4 bg-blue-500/15 rounded-xl border border-blue-400/40 text-center">
+                            <p id="ai-hint-text" class="text-sm text-blue-300 font-bold"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Der SANDWICH-Prozess -->
+        <section id="slide-4" class="slide">
+            <div class="w-full max-w-6xl px-4">
+                <h2 class="text-3xl font-bold mb-6 text-center">Der SANDWICH-Prozess</h2>
+                <p class="text-slate-400 text-center mb-10 max-w-4xl mx-auto text-lg leading-relaxed">
+                    Betrachten wir nicht den einzelnen Prompt, sondern den kompletten Prozess, mit KI etwas Wertvolles
+                    zu generieren, so wird aus SAND ein SANDWICH.
+                </p>
+
+                <!-- Oben: W-I-CH Bausteine -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div
+                        class="p-8 bg-amber-900/20 border border-amber-500/30 rounded-[2.5rem] relative shadow-lg group hover:bg-amber-900/30 transition-all">
+                        <div class="text-amber-500 text-4xl font-black mb-4">W</div>
+                        <h4 class="font-bold text-amber-200 mb-2 uppercase text-xs tracking-widest">Wiederholung</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Iteratives Vorgehen: Verfeinern Sie das
+                            Ergebnis durch gezieltes Nachfragen und Justierung.</p>
+                    </div>
+                    <div
+                        class="p-8 bg-blue-900/20 border border-blue-500/30 rounded-[2.5rem] relative shadow-lg group hover:bg-blue-900/30 transition-all">
+                        <div class="text-blue-500 text-4xl font-black mb-4">I</div>
+                        <h4 class="font-bold text-blue-200 mb-2 uppercase text-xs tracking-widest">Input & Inhalt</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Geben Sie der KI konkrete Daten, Texte oder
+                            Beispiele mit, auf denen sie arbeiten soll.</p>
+                    </div>
+                    <div
+                        class="p-8 bg-emerald-900/20 border border-emerald-500/30 rounded-[2.5rem] relative shadow-lg group hover:bg-emerald-900/30 transition-all">
+                        <div class="text-emerald-500 text-4xl font-black mb-4">CH</div>
+                        <h4 class="font-bold text-emerald-200 mb-2 uppercase text-xs tracking-widest">Check</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">Kontrolle des Ergebnisses auf Fakten, Logik
+                            und potenzielle Halluzinationen.</p>
+                    </div>
+                </div>
+
+                <!-- Unten: Zusammenfassung mit Warnzeichen und Reihenfolge SAND-I-W-CH -->
+                <div
+                    class="bg-slate-800/40 p-8 rounded-[3rem] border border-amber-500/40 flex items-center gap-8 shadow-2xl relative">
+                    <div class="flex-shrink-0 flex gap-2 items-center">
+                        <i class="fas fa-exclamation-triangle text-amber-500 text-4xl mr-2"></i>
+                        <div class="flex gap-1">
+                            <div
+                                class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold italic opacity-30 text-xs">
+                                SAND</div>
+                            <div
+                                class="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center font-bold shadow-md">
+                                I</div>
+                            <div
+                                class="w-10 h-10 bg-amber-700 rounded-lg flex items-center justify-center font-bold shadow-md">
+                                W</div>
+                            <div
+                                class="w-10 h-10 bg-emerald-700 rounded-lg flex items-center justify-center font-bold shadow-md">
+                                CH</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        <b>Der korrekte Ablauf:</b> Der <b>Input (I)</b> gehört direkt an den Prompt (SAND). Erst
+                        nachdem die KI geantwortet hat, folgen die <b>Wiederholung (W)</b> zur Verfeinerung und der
+                        kritische <b>Check (CH)</b>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Datenschutz -->
+        <section id="slide-5" class="slide">
+            <div class="w-full max-w-4xl px-4">
+                <div
+                    class="bg-red-500/10 p-10 rounded-[3rem] border border-red-500/30 relative overflow-hidden shadow-2xl">
+                    <div class="flex items-center gap-6 mb-8">
+                        <div
+                            class="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-red-400">Datenschutz: Die Goldene Regel</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/60 p-6 rounded-2xl border border-white/5">
+                            <h3 class="font-bold text-white mb-1 italic">Niemals Personenbezogene Daten</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">Keine echten Namen, E-Mails oder
+                                Telefonnummern. <b>Wir verwenden Platzhalter wie [NAME].</b></p>
+                        </div>
+                        <div class="bg-slate-900/60 p-6 rounded-2xl border border-white/5">
+                            <h3 class="font-bold text-white mb-1 italic">Keine Interna / Geheimnisse</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">Keine Geschäftsberichte, Passwörter oder
+                                vertrauliche Strategien hochladen.</p>
+                        </div>
+                        <div class="bg-emerald-900/40 p-6 rounded-2xl border border-emerald-500/30 shadow-lg">
+                            <h3 class="font-bold text-emerald-300 mb-1 italic"><i
+                                    class="fas fa-check-circle mr-2"></i>Wichtige Ausnahme: Isolierte Modelle</h3>
+                            <p class="text-slate-200 text-xs leading-relaxed">Läuft die KI isoliert in unserer eigenen
+                                Organisation (Datenzugriff nur lesend nach außen, kein Abfluss von Eingaben nach außen),
+                                dürfen wir interne Daten nutzen.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Checkliste -->
+        <section id="slide-6" class="slide">
+            <div class="w-full max-w-3xl px-4 text-center">
+                <div class="flex items-center justify-center gap-4 mb-8">
+                    <h2 class="text-3xl font-bold">Ready to SANDWICH?</h2>
+                    <button onclick="copyChecklist()" title="Checkliste für den Alltag kopieren"
+                        class="text-slate-400 hover:text-white transition-colors bg-slate-800 p-3 rounded-lg active:scale-95 shadow-md"><i
+                            class="fas fa-copy text-xl"></i></button>
+                </div>
+
+                <div class="space-y-2 text-left mb-10">
+                    <div class="p-1 bg-blue-600/10 rounded-xl mb-4 border border-blue-500/10 shadow-lg">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-blue-500 font-bold px-4 py-1">Input-Phase
+                            (Der Prompt)</p>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-blue-600 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-blue-600">S</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-blue-500"><span
+                                class="text-slate-200 font-medium"><b>Situation:</b> Rolle & Kontext definiert?</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-amber-600 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-amber-600">A</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-amber-500"><span
+                                class="text-slate-200 font-medium"><b>Aufgabe:</b> Präzise formuliert?</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-emerald-600 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-emerald-600">N</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-emerald-500"><span
+                                class="text-slate-200 font-medium"><b>Nebenbedingung:</b> Limits gesetzt?</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-purple-600 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-purple-600">D</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-purple-500"><span
+                                class="text-slate-200 font-medium"><b>Darstellung:</b> Format klar definiert?</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-blue-400 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-blue-700">I</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-blue-400"><span
+                                class="text-slate-200 font-medium"><b>Input/Inhalt:</b> Daten mitgeliefert?</span>
+                        </label>
+                    </div>
+                    <div class="p-1 bg-emerald-600/10 rounded-xl mb-4 border border-emerald-500/10 shadow-lg">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-emerald-500 font-bold px-4 py-1">
+                            Feedback-Phase (Danach)</p>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-amber-700 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-amber-700">W</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-amber-500"><span
+                                class="text-slate-200 font-medium"><b>Wiederholung:</b> Ergebnis verfeinert?</span>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 bg-slate-800/40 p-3 rounded-xl cursor-pointer mb-1 border-l-4 border-l-emerald-700 hover:bg-slate-800 transition-all">
+                            <div class="check-square bg-emerald-700">CH</div><input type="checkbox"
+                                class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-emerald-300"><span
+                                class="text-slate-200 font-medium"><b>Check:</b> Fakten geprüft?</span>
+                        </label>
+                    </div>
+                    <label
+                        class="flex items-center gap-4 bg-slate-800/40 p-4 rounded-xl cursor-pointer border-l-4 border-l-red-600 shadow-md hover:bg-slate-800 transition-all">
+                        <div class="check-square bg-red-600"><i class="fas fa-shield-alt"></i></div><input
+                            type="checkbox" class="w-6 h-6 rounded bg-slate-900 border-slate-700 text-red-500"><span
+                            class="text-slate-200 font-medium"><b>Datenschutz:</b> Platzhalter verwendet?</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Navigation Control -->
+    <nav class="nav-container">
+        <div class="page-indicator"><span id="page-label" class="text-xs font-bold text-slate-400">1 / 7</span></div>
+        <div class="flex gap-2">
+            <button id="btnBack" onclick="handleNavRequest(-1)" class="nav-btn"><i
+                    class="fas fa-chevron-left text-slate-400"></i></button>
+            <button id="btnFwd" onclick="handleNavRequest(1)" class="nav-btn primary"><i id="fwdIcon"
+                    class="fas fa-chevron-right"></i></button>
+        </div>
+    </nav>
+
+    <script>
+        let currentIdx = 0; const totalSlides = 7; let isAnimating = false;
+        const builderState = { s: false, a: false, n: false, d: false };
+
+        // --- NAVIGATION ENGINE ---
+        function handleNavRequest(dir) {
+            if (isAnimating) return;
+            const nextIdx = currentIdx + dir;
+            if (nextIdx >= 0 && nextIdx < totalSlides) performTransition(currentIdx, nextIdx, dir);
+        }
+
+        function performTransition(oldIdx, newIdx, dir) {
+            isAnimating = true;
+            const slides = document.querySelectorAll('.slide');
+            const currentSlide = slides[oldIdx]; const nextSlide = slides[newIdx];
+            slides.forEach(s => s.classList.remove('slide-in-right', 'slide-out-left', 'slide-in-left', 'slide-out-right'));
+            if (dir > 0) { currentSlide.classList.add('slide-out-left'); nextSlide.classList.add('slide-in-right'); }
+            else { currentSlide.classList.add('slide-out-right'); nextSlide.classList.add('slide-in-left'); }
+            setTimeout(() => {
+                currentSlide.classList.remove('active', 'slide-out-left', 'slide-out-right');
+                nextSlide.classList.remove('slide-in-right', 'slide-in-left'); nextSlide.classList.add('active');
+                currentIdx = newIdx; isAnimating = false; updateNavUI();
+            }, 500);
+        }
+
+        function updateNavUI() {
+            document.getElementById('page-label').innerText = `${currentIdx + 1} / ${totalSlides}`;
+            document.getElementById('btnBack').disabled = currentIdx === 0;
+            document.getElementById('btnFwd').disabled = currentIdx === totalSlides - 1;
+            document.getElementById('fwdIcon').className = currentIdx === totalSlides - 1 ? 'fas fa-check' : 'fas fa-chevron-right';
+        }
+
+        // Input Listeners
+        window.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') handleNavRequest(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') handleNavRequest(-1);
+        });
+
+        let isWheeling = false;
+        window.addEventListener('wheel', e => {
+            if (isAnimating || isWheeling) return;
+            if (Math.abs(e.deltaX) > 30 || Math.abs(e.deltaY) > 50) {
+                isWheeling = true; handleNavRequest((e.deltaX > 0 || e.deltaY > 0) ? 1 : -1);
+                setTimeout(() => isWheeling = false, 700);
+            }
+        }, { passive: true });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const diffX = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(diffX) > 60) handleNavRequest(diffX < 0 ? 1 : -1);
+        }, { passive: true });
+
+        // --- SIMULATOR ---
+        function toggleComp(id) {
+            builderState[id] = !builderState[id];
+            const btn = document.getElementById(`btn-${id}`);
+            btn.classList.toggle('active', builderState[id]);
+            btn.innerHTML = builderState[id] ? btn.innerHTML.replace('+', '✓ ') : btn.innerHTML.replace('✓ ', '+');
+            document.getElementById('ai-response').classList.add('hidden');
+            document.getElementById('ai-hint').classList.add('hidden');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const preview = document.getElementById('p-result');
+            let parts = [];
+            if (builderState.s) parts.push("<span class='text-blue-400 font-bold'>du handelst als unser head of marketing. wir launchen nächste woche unser neues projekt.</span>");
+            let action = "verfasse eine nachricht für uns.";
+            if (builderState.a) action = "<span class='text-amber-400 font-bold'>verfasse eine ankündigung, die vorteile betont,</span>";
+            if (builderState.n) action += " <span class='text-emerald-400 font-bold'>fasse dich kurz (max. 100 wörter).</span>";
+            if (builderState.d) action += " <span class='text-purple-400 font-bold'>in form einer professionellen e-mail in du-form inklusive einer betreffzeile.</span>";
+            preview.innerHTML = parts.join(" ") + (parts.length > 0 ? " " : "") + action;
+        }
+
+        function sendPrompt() {
+            const loading = document.getElementById('ai-loading'); const response = document.getElementById('ai-response');
+            const hintArea = document.getElementById('ai-hint'); const btn = document.getElementById('send-btn');
+            loading.classList.remove('hidden'); response.classList.add('hidden'); hintArea.classList.add('hidden');
+            btn.classList.add('opacity-50', 'pointer-events-none');
+
+            setTimeout(() => {
+                loading.classList.add('hidden'); response.classList.remove('hidden'); hintArea.classList.remove('hidden');
+                btn.classList.remove('opacity-50', 'pointer-events-none');
+
+                let subject = ""; let body = ""; let signature = ""; let hint = "";
+
+                if (builderState.s) { signature = "Beste Grüße,<br>Dein Marketing-Team"; }
+                else { signature = "Dein ungebriefter Toaster-Assistent 🍞"; }
+
+                if (!builderState.n) {
+                    subject = "Umfassende Details und historische Einordnung unseres neuesten Projekts";
+                    const history = "<b>Unsere Historie:</b> Alles begann 1892 in einer kleinen Garage im Hinterhof eines Schreinermeisters. Über Jahrzehnte hinweg überlebten wir zwei Weltkriege, die industrielle Revolution, das Aufkommen des Faxgeräts und die Erfindung des geschnittenen Brots. Unsere Werte basieren auf unendlicher Tradition, tiefer Innovation und der Leidenschaft für extrem lange Texte ohne Punkt und Komma. Heute sind wir stolz darauf, Marktführer in 40 Ländern zu sein... [Hier folgen weitere 450 Wörter] ...und im Zuge dieser stolzen Entwicklung launchen wir nächste Woche ein neues Projekt.";
+                    body = history;
+                    hint = "Hinweis: Da keine Nebenbedingung (N) gesetzt wurde, hat die KI die komplette Historie ausgeplaudert!";
+                } else if (!builderState.a) {
+                    if (builderState.s) {
+                        subject = "Interne Mitteilung: Projekt-Stopp";
+                        body = "Aufgrund aktueller Marktveränderungen habe ich beschlossen, den Launch abzusagen. Wir investieren stattdessen in neue Büro-Kaffeemaschinen.";
+                        hint = "Hinweis: Die Situation war klar, aber ohne Aufgabe (A) hat die KI geraten, dass du das Projekt abbrechen willst!";
+                    } else {
+                        subject = "WICHTIG: Einladung zur Dinosaurier-Mottoparty!";
+                        body = "Hallo Freunde der Urzeit, wir feiern nächste Woche eine riesige Dino-Party! Es gibt Wackelpeter-Vulkane und wir machen ein großes Wett-Brüllen.";
+                        hint = "Hinweis: Ohne Situation (S) und ohne Aufgabe (A) wurde die Aktion völlig falsch geraten!";
+                    }
+                } else if (!builderState.s) {
+                    subject = "ARRR! Neues Zeug am Horizont!";
+                    body = "AHOI LANDRATTE! 🏴‍☠️ Wir entern nächste Woche den Markt!";
+                    hint = "Hinweis: Ohne Situation/Rolle (S) hat die KI einen zufälligen Absender gewählt!";
+                } else if (!builderState.d) {
+                    body = "Ein Projekt so neu und fein,<br>Soll nächste Woche fertig sein.<br>Die Vorteile, sie glänzen hell,<br>Wir launchen es nun ziemlich schnell.<br>Wer das nicht nutzt, der ist ein Tor,<br>Denn Effizienz rückt nun hervor.";
+                    hint = "Hinweis: Situation, Aufgabe und Nebenbedingung waren klar. Da die Darstellung (D) fehlte, wurde ein Gedicht gewählt!";
+                } else {
+                    subject = "Endlich da: Dein neues Projekt-Highlight!";
+                    body = "Ich freue mich, dir mitteilen zu können, dass wir nächste Woche unser neues Projekt launchen. Probier es am besten direkt aus!";
+                    hint = "Perfekt: SAND wurde vollständig genutzt. ✅";
+                }
+
+                let finalOutput = "";
+                if ((builderState.d || !builderState.n) && subject) {
+                    finalOutput = `<b>Betreff:</b> ${subject} <br><br> Hallo, <br><br> ${body} <br><br> ${signature}`;
+                } else { finalOutput = body; }
+
+                document.getElementById('ai-text').innerHTML = finalOutput;
+                document.getElementById('ai-hint-text').innerHTML = hint;
+            }, 1800);
+        }
+
+        function copyChecklist() {
+            const textToCopy = `SANDWICH-Checkliste:\n\nPROMPT (SAND+I):\n- Situation: Rolle & Kontext definiert?\n- Aufgabe: Präzise formuliert?\n- Nebenbedingung: Limits gesetzt?\n- Darstellung: Format klar?\n- Input: Daten mitgeliefert?\n\nPROZESS (W+CH):\n- Wiederholung: Ergebnis verfeinert?\n- Check: Fakten geprüft?\n\nSICHERHEIT:\n- Datenschutz: Platzhalter verwendet?`;
+            const textArea = document.createElement("textarea"); textArea.value = textToCopy; document.body.appendChild(textArea); textArea.select();
+            try { document.execCommand('copy'); document.getElementById('copyToast').classList.remove('hidden'); setTimeout(() => document.getElementById('copyToast').classList.add('hidden'), 2000); } catch (err) { }
+            document.body.removeChild(textArea);
+        }
+
+        window.onload = () => { updateNavUI(); };
+    </script>
+</body>
+
+</html>

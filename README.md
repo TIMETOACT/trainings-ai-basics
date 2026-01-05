@@ -11,9 +11,13 @@ Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulun
 - [hallucination-visualisierung.html](ki-im-alltag/01-03-hallucination-exercise/hallucination-visualisierung.html)
 - [issue.md](ki-im-alltag/01-03-hallucination-exercise/issue.md)
 
-## 01-05-prompting-duel
+## 01-04-prompting-basics
 
-- [issue.md](ki-im-alltag/01-05-prompting-duel/issue.md)
+- [prompting-visualisierung.html](ki-im-alltag/01-04-prompting-basics/prompting-visualisierung.html)
+
+## 01-05-prompt-engineering-exercise
+
+- [issue.md](ki-im-alltag/01-05-prompt-engineering-exercise/issue.md)
 
 ## 01-06-transfer
 
