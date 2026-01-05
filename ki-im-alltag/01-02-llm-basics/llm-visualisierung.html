@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI Grundlagen - Interaktiver Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-deep: #020617;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #facc15;
+            --accent-param: #60a5fa;
+            --dashboard-bg: #1e293b;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            width: 100vw;
+            padding: 1.5rem;
+            animation: fadeIn 0.4s ease-out forwards;
+            flex-direction: column;
+            justify-content: center;
+            /* Vertikale Zentrierung */
+            align-items: center;
+            /* Horizontale Zentrierung der Inhalts-Box */
+        }
+
+        @media (min-width: 768px) {
+            .slide {
+                padding: 2rem 4rem;
+                height: 100vh;
+            }
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Container zur Breitenbegrenzung auf Desktop */
+        .slide-content-scroll {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-y: auto;
+            padding-bottom: 5rem;
+        }
+
+        @media (min-width: 768px) {
+            .slide-content-scroll {
+                overflow-y: visible;
+                padding-bottom: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard {
+            background: var(--dashboard-bg);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .warning-banner {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* SVG Flow Animations */
+        .signal-flow {
+            stroke-dasharray: 10;
+            animation: dash 1.5s linear infinite;
+            stroke: var(--accent-blue) !important;
+            stroke-width: 4 !important;
+            opacity: 1 !important;
+        }
+
+        .backprop-flow {
+            stroke-dasharray: 10;
+            animation: dash-rev 1.5s linear infinite;
+            stroke: var(--accent-red) !important;
+            stroke-width: 4 !important;
+            opacity: 1 !important;
+        }
+
+        @keyframes dash {
+            from {
+                stroke-dashoffset: 100;
+            }
+
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes dash-rev {
+            from {
+                stroke-dashoffset: 0;
+            }
+
+            to {
+                stroke-dashoffset: 100;
+            }
+        }
+
+        /* Pulsing for m & n */
+        .value-pulse {
+            animation: pulse-animation 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.4);
+                fill: #fff;
+                filter: drop-shadow(0 0 8px #fff);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-overlay {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            backdrop-filter: blur(4px);
+        }
+
+        .loop-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .loop-table th {
+            padding: 6px;
+            text-align: center;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .loop-table th {
+                font-size: 0.875rem;
+                padding: 8px;
+            }
+        }
+
+        .loop-table td {
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .loop-table td {
+                padding: 8px 10px;
+                font-size: 1rem;
+            }
+        }
+
+        .param-text {
+            filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.8));
+        }
+
+        .slide-info {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .pro-tip {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+            border: 1px solid var(--accent-green);
+        }
+
+        /* Node Styles */
+        .node-base {
+            fill: #1e293b;
+            stroke: #3b82f6;
+            stroke-width: 3;
+            opacity: 1;
+        }
+
+        .node-inactive {
+            fill: #1e293b;
+            stroke: #475569;
+            opacity: 0.5;
+            stroke-width: 2;
+        }
+
+        .node-hidden-fix {
+            fill: #1e293b;
+            stroke: #3b82f6;
+            stroke-width: 2;
+            opacity: 0.6;
+        }
+
+        .mnist-pixel-grid {
+            display: grid;
+            grid-template-columns: repeat(28, 1fr);
+            grid-template-rows: repeat(28, 1fr);
+            width: 150px;
+            height: 150px;
+            background: #000;
+            border: 2px solid #334155;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 1 / 1;
+        }
+
+        @media (min-width: 640px) {
+            .mnist-pixel-grid {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        .pixel {
+            width: 100%;
+            height: 100%;
+        }
+
+        .link-style {
+            color: var(--accent-blue);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Globale Navigation -->
+    <div
+        class="fixed bottom-4 left-0 right-0 md:bottom-8 md:right-8 md:left-auto z-50 flex items-center justify-center md:justify-end gap-3 md:gap-4 px-4">
+        <div id="slide-counter" class="slide-info shadow-xl">1 / 9</div>
+        <div class="flex gap-2 md:gap-4">
+            <button onclick="changeSlide(-1)" id="prevBtn"
+                class="bg-slate-800 hover:bg-slate-700 text-white p-3 md:p-4 rounded-full transition disabled:opacity-20 shadow-lg">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button onclick="changeSlide(1)" id="nextBtn"
+                class="bg-blue-600 hover:bg-blue-500 text-white p-3 md:p-4 rounded-full transition disabled:opacity-20 shadow-lg">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Slide 0: Start -->
+    <div class="slide active" id="slide-0">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=2070"
+                class="w-full h-full object-cover opacity-20" alt="Brain">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
+        </div>
+        <div class="relative z-10 flex flex-col justify-center items-center text-center h-full max-w-4xl">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 leading-tight">KI & LLMs:<br><span
+                    class="text-blue-500">Die Magie verstehen</span></h1>
+            <p class="text-lg sm:text-xl md:text-2xl text-slate-400 max-w-2xl">Vom simplen Rechnen zum digitalen Denken.
+                Eine Einführung in die Welt der Neuronalen Netze für Nicht-Techniker.</p>
+        </div>
+    </div>
+
+    <!-- Slide 1: Zusammenhang -->
+    <div class="slide" id="slide-1">
+        <div class="slide-content-scroll">
+            <h2
+                class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-12 border-l-4 border-blue-500 pl-4 md:pl-6">
+                Der Zusammenhang</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center flex-1">
+                <div class="space-y-4 md:space-y-6">
+                    <div class="p-4 md:p-6 dashboard border-l-4 border-blue-500 shadow-md">
+                        <b class="text-lg md:text-xl block mb-1">Künstliche Intelligenz (KI)</b>
+                        <p class="text-slate-400 text-xs md:text-sm">Das Feld: Maschinen, die komplexe Aufgaben
+                            "intelligent" lösen.</p>
+                    </div>
+                    <div class="p-4 md:p-6 dashboard border-l-4 border-green-500 shadow-md">
+                        <b class="text-lg md:text-xl block mb-1">Neuronale Netze</b>
+                        <p class="text-slate-400 text-xs md:text-sm">Die Technologie: Mathematische Strukturen, die wie
+                            Gehirne aus Daten lernen.</p>
+                    </div>
+                    <div class="p-4 md:p-6 dashboard border-l-4 border-yellow-400 shadow-md">
+                        <b class="text-lg md:text-xl block mb-1">LLMs (Large Language Models)</b>
+                        <p class="text-slate-400 text-xs md:text-sm">Das Produkt: Riesige Netze (wie ChatGPT), die
+                            Sprache verstehen und erzeugen.</p>
+                    </div>
+                </div>
+                <div class="text-center py-8">
+                    <i class="fa-solid fa-layer-group text-blue-500 text-7xl md:text-9xl mb-4 md:mb-8"></i>
+                    <p class="text-lg md:text-2xl italic text-slate-400">"Neuronale Netze sind das Fundament moderner
+                        LLMs."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: Regression -->
+    <div class="slide" id="slide-2">
+        <div class="slide-content-scroll">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6">1. Die
+                Basis: Lineare Regression</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center flex-1">
+                <div class="dashboard p-4 sm:p-6 md:p-8 order-2 md:order-1">
+                    <svg viewBox="0 0 500 300" class="w-full bg-slate-900/50 rounded-xl mb-4 md:mb-6">
+                        <line x1="40" y1="260" x2="460" y2="260" stroke="#334155" />
+                        <line x1="40" y1="260" x2="40" y2="40" stroke="#334155" />
+                        <circle cx="80" cy="230" r="6" fill="#3b82f6" />
+                        <circle cx="160" cy="180" r="6" fill="#3b82f6" />
+                        <circle cx="280" cy="140" r="6" fill="#3b82f6" />
+                        <circle cx="420" cy="70" r="6" fill="#3b82f6" />
+                        <line id="reg-line-live" x1="40" y1="260" x2="460" y2="260" stroke="var(--accent-green)"
+                            stroke-width="4" stroke-linecap="round" opacity="0" />
+                    </svg>
+                    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-4 md:mb-6">
+                        <div class="bg-slate-900 p-2 sm:p-4 rounded-lg text-center flex flex-col justify-center">
+                            <div class="text-[8px] sm:text-[10px] text-slate-500 uppercase leading-tight">m (Steigung)
+                            </div>
+                            <div id="val-m" class="text-sm sm:text-xl md:text-2xl font-mono font-bold text-blue-400">
+                                0.00</div>
+                        </div>
+                        <div class="bg-slate-900 p-2 sm:p-4 rounded-lg text-center flex flex-col justify-center">
+                            <div class="text-[8px] sm:text-[10px] text-slate-500 uppercase leading-tight">n (Startwert)
+                            </div>
+                            <div id="val-n" class="text-sm sm:text-xl md:text-2xl font-mono font-bold text-blue-400">0.0
+                            </div>
+                        </div>
+                        <div
+                            class="bg-slate-900 p-2 sm:p-4 rounded-lg text-center border border-red-900/50 flex flex-col justify-center">
+                            <div class="text-[8px] sm:text-[10px] text-slate-500 uppercase leading-tight">Fehler</div>
+                            <div id="val-err"
+                                class="text-[10px] sm:text-xl md:text-2xl font-mono font-bold text-red-500">MAX</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 sm:gap-4">
+                        <button onclick="startRegressionAnim('wild')"
+                            class="flex-1 bg-red-600 hover:bg-red-500 py-2 sm:py-3 rounded-xl font-bold transition shadow-lg text-[10px] sm:text-xs md:text-sm">Stürmisch</button>
+                        <button onclick="startRegressionAnim('stable')"
+                            class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 sm:py-3 rounded-xl font-bold transition shadow-lg text-[10px] sm:text-xs md:text-sm">Besonnen</button>
+                    </div>
+                </div>
+                <div class="space-y-4 md:space-y-6 order-1 md:order-2">
+                    <p class="text-sm md:text-base">KI beginnt mit Mathematik: Wie hängen Daten zusammen?</p>
+                    <div class="text-green-400 text-2xl sm:text-3xl" style="font-family: serif; font-style: italic;">y =
+                        m * x + n</div>
+                    <p class="text-slate-400 text-sm md:text-base">Die KI nähert sich schrittweise an die perfekte Linie
+                        an.</p>
+                    <div class="pro-tip p-4 sm:p-6 rounded-2xl shadow-lg border-green-500/30">
+                        <h4 class="text-green-400 font-bold mb-2 uppercase text-xs sm:text-sm">Gradient Descent</h4>
+                        <p class="text-xs sm:text-sm text-slate-200">Der Prozess des Herantastens, um Fehler
+                            systematisch zu minimieren.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Anatomie -->
+    <div class="slide" id="slide-3">
+        <div class="slide-content-scroll">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6">2.
+                Anatomie eines Neuronalen Netzes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center flex-1">
+                <div class="flex flex-col items-center gap-2">
+                    <div class="dashboard p-4 sm:p-8 w-full">
+                        <svg viewBox="0 0 600 400" class="w-full">
+                            <!-- Background Lines -->
+                            <g opacity="0.2" stroke="white" stroke-width="1.5">
+                                <line x1="80" y1="100" x2="300" y2="100" />
+                                <line x1="80" y1="100" x2="300" y2="200" />
+                                <line x1="80" y1="100" x2="300" y2="300" />
+                                <line x1="80" y1="200" x2="300" y2="100" />
+                                <line x1="80" y1="200" x2="300" y2="200" />
+                                <line x1="80" y1="200" x2="300" y2="300" />
+                                <line x1="80" y1="300" x2="300" y2="100" />
+                                <line x1="80" y1="300" x2="300" y2="200" />
+                                <line x1="80" y1="300" x2="300" y2="300" />
+                                <line x1="300" y1="100" x2="520" y2="200" />
+                                <line x1="300" y1="200" x2="520" y2="200" />
+                                <line x1="300" y1="300" x2="520" y2="200" />
+                            </g>
+                            <!-- Active Paths -->
+                            <line x1="80" y1="300" x2="300" y2="200" stroke="#3b82f6" stroke-width="4" id="anat-l1" />
+                            <line x1="300" y1="200" x2="520" y2="200" stroke="#3b82f6" stroke-width="4" id="anat-l2" />
+
+                            <!-- Neurons (drawn after to mask interior lines) -->
+                            <circle cx="80" cy="100" r="25" class="node-inactive" />
+                            <circle cx="80" cy="200" r="25" class="node-inactive" />
+                            <circle cx="80" cy="300" r="32" class="node-base" />
+                            <text x="80" y="300" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="11" font-weight="bold">X</text>
+
+                            <circle cx="300" cy="100" r="25" class="node-base" />
+                            <circle cx="300" cy="200" r="38" class="node-base" />
+                            <circle cx="300" cy="300" r="25" class="node-base" />
+                            <text x="300" y="200" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="12" font-weight="bold">HIDDEN</text>
+
+                            <circle cx="520" cy="200" r="32" class="node-base" />
+                            <text x="520" y="200" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="16" font-weight="bold">y</text>
+
+                            <text x="130" y="240" fill="var(--accent-param)" font-size="20" font-weight="bold"
+                                class="param-text">m = 0.80</text>
+                            <text x="300" y="280" fill="var(--accent-param)" font-size="20" font-weight="bold"
+                                text-anchor="middle" class="param-text">n = 10.00</text>
+                        </svg>
+                    </div>
+                    <div class="warning-banner">Vereinfachte Darstellung</div>
+                </div>
+                <div class="space-y-4 text-sm md:text-base">
+                    <ul class="space-y-3 md:space-y-4 text-slate-300">
+                        <li><b class="text-blue-400">Input Layer:</b> Dateneingang.</li>
+                        <li><b class="text-blue-400">Hidden Layer:</b> Verarbeitungsebene.</li>
+                        <li><b class="text-green-500">Gewichtung (m):</b> Stärke der Verbindung.</li>
+                        <li><b class="text-blue-400">Output Layer:</b> Das Endergebnis.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Loop -->
+    <div class="slide" id="slide-4">
+        <div class="slide-content-scroll">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6">3. Der
+                Loop: Lernen durch Wiederholung</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-stretch flex-1">
+                <div class="flex flex-col gap-6">
+                    <div
+                        class="dashboard p-4 sm:p-6 relative overflow-hidden flex flex-col justify-between h-[380px] sm:h-[440px]">
+                        <div id="success-box"
+                            class="absolute inset-0 z-20 success-overlay flex flex-col items-center justify-center hidden">
+                            <i class="fa-solid fa-circle-check text-5xl md:text-6xl mb-4"></i>
+                            <span class="text-xl md:text-2xl font-bold text-center px-4">Training erfolgreich!</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="loop-table mb-4">
+                                <colgroup>
+                                    <col style="width: 15%;">
+                                    <col style="width: 25%;">
+                                    <col style="width: 30%;">
+                                    <col style="width: 30%;">
+                                </colgroup>
+                                <thead>
+                                    <tr class="text-slate-500 border-b border-slate-700">
+                                        <th>X</th>
+                                        <th>Y (Soll)</th>
+                                        <th class="text-blue-400">Y (Ist)</th>
+                                        <th>Abw.</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loop-table-body">
+                                    <tr class="border-b border-slate-800">
+                                        <td>1.2</td>
+                                        <td>2.6</td>
+                                        <td id="ist-0" class="text-blue-400 font-mono">-</td>
+                                        <td id="abw-0" class="font-mono">-</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td>2.5</td>
+                                        <td>4.8</td>
+                                        <td id="ist-1" class="text-blue-400 font-mono">-</td>
+                                        <td id="abw-1" class="font-mono">-</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td>3.8</td>
+                                        <td>8.0</td>
+                                        <td id="ist-2" class="text-blue-400 font-mono">-</td>
+                                        <td id="abw-2" class="font-mono">-</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td>5.1</td>
+                                        <td>10.2</td>
+                                        <td id="ist-3" class="text-blue-400 font-mono">-</td>
+                                        <td id="abw-3" class="font-mono">-</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td>6.4</td>
+                                        <td>12.8</td>
+                                        <td id="ist-4" class="text-blue-400 font-mono">-</td>
+                                        <td id="abw-4" class="font-mono">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex justify-end pt-2 border-t border-slate-700">
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Loss (Summe)
+                                </div>
+                                <div id="loss-sum-label" class="text-2xl md:text-3xl font-mono font-bold text-red-500">
+                                    0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest text-center md:text-left">Runde:
+                            <span id="epoch-label" class="text-white font-bold">1 / 6</span></p>
+                        <div class="flex gap-2 sm:gap-4">
+                            <button onclick="runBatchForward()" id="btnFwd"
+                                class="flex-1 bg-blue-600 hover:bg-blue-500 py-3 md:py-4 rounded-xl font-bold transition shadow-lg disabled:opacity-50 text-xs sm:text-base">Vorhersage</button>
+                            <button onclick="runBatchBackprop()" id="btnBwd" disabled
+                                class="flex-1 bg-red-600 hover:bg-red-500 py-3 md:py-4 rounded-xl font-bold transition shadow-lg disabled:opacity-50 text-xs sm:text-base">Korrektur</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                    <div class="dashboard p-4 sm:p-8 w-full flex items-center justify-center h-[300px] md:h-[440px]">
+                        <svg viewBox="0 0 600 400" class="w-full" id="loop-net">
+                            <g opacity="0.2" stroke="white" stroke-width="1.5">
+                                <line x1="80" y1="100" x2="300" y2="100" />
+                                <line x1="80" y1="100" x2="300" y2="200" />
+                                <line x1="80" y1="100" x2="300" y2="300" />
+                                <line x1="80" y1="200" x2="300" y2="100" />
+                                <line x1="80" y1="200" x2="300" y2="200" />
+                                <line x1="80" y1="200" x2="300" y2="300" />
+                                <line x1="80" y1="300" x2="300" y2="100" />
+                                <line x1="80" y1="300" x2="300" y2="200" />
+                                <line x1="80" y1="300" x2="300" y2="300" />
+                                <line x1="300" y1="100" x2="520" y2="200" />
+                                <line x1="300" y1="200" x2="520" y2="200" />
+                                <line x1="300" y1="300" x2="520" y2="200" />
+                            </g>
+                            <circle cx="80" cy="100" r="25" class="node-hidden-fix" />
+                            <circle cx="80" cy="200" r="25" class="node-hidden-fix" />
+                            <circle cx="300" cy="100" r="25" class="node-hidden-fix" />
+                            <circle cx="300" cy="300" r="25" class="node-hidden-fix" />
+                            <line x1="80" y1="300" x2="300" y2="200" stroke="#3b82f6" stroke-width="4" id="loop-l1"
+                                opacity="0.4" />
+                            <line x1="300" y1="200" x2="520" y2="200" stroke="#3b82f6" stroke-width="4" id="loop-l2"
+                                opacity="0.4" />
+                            <circle cx="80" cy="300" r="32" fill="#1e293b" stroke="#3b82f6" stroke-width="4" /><text
+                                x="80" y="300" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="11" font-weight="bold">X</text>
+                            <circle cx="300" cy="200" r="38" fill="#1e293b" stroke="#3b82f6" stroke-width="4" /><text
+                                x="300" y="200" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="12" font-weight="bold">HIDDEN</text>
+                            <circle cx="520" cy="200" r="32" fill="#1e293b" stroke="#3b82f6" stroke-width="4" /><text
+                                x="520" y="200" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="16" font-weight="bold">y</text>
+                            <text x="130" y="240" fill="var(--accent-param)" font-size="22" font-weight="bold"
+                                id="loop-m-val" class="param-text">m = 0.50</text>
+                            <text x="300" y="280" fill="var(--accent-param)" font-size="20" font-weight="bold"
+                                text-anchor="middle" id="loop-n-val" class="param-text">n = 10.00</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: KFZ -->
+    <div class="slide" id="slide-5">
+        <div class="slide-content-scroll">
+            <h2
+                class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6 text-blue-400 uppercase tracking-wide">
+                Beispiel: KFZ-Spritverbrauch</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-stretch flex-1">
+                <div class="space-y-4 md:space-y-6">
+                    <div class="pro-tip p-4 md:p-6 rounded-2xl shadow-lg border-blue-500/30">
+                        <h3 class="text-lg md:text-xl font-bold mb-2 text-white">Multiple Regression</h3>
+                        <p class="text-slate-200 text-xs md:text-sm leading-relaxed">Hier fließen mehrere Faktoren
+                            gleichzeitig ein. Jedes Neuron am Eingang gewichtet einen physikalischen Wert anders.</p>
+                    </div>
+                    <div class="space-y-2 md:space-y-3">
+                        <div class="p-3 dashboard border-l-4 border-blue-500 flex items-center gap-4 text-xs shadow-sm">
+                            <div
+                                class="w-8 h-8 bg-blue-900/50 rounded-full flex items-center justify-center text-blue-400 font-bold flex-shrink-0">
+                                1</div>
+                            <b class="text-white">Motorleistung (PS)</b>
+                        </div>
+                        <div class="p-3 dashboard border-l-4 border-blue-500 flex items-center gap-4 text-xs shadow-sm">
+                            <div
+                                class="w-8 h-8 bg-blue-900/50 rounded-full flex items-center justify-center text-blue-400 font-bold flex-shrink-0">
+                                2</div>
+                            <b class="text-white">Hubraum (ccm)</b>
+                        </div>
+                        <div class="p-3 dashboard border-l-4 border-blue-500 flex items-center gap-4 text-xs shadow-sm">
+                            <div
+                                class="w-8 h-8 bg-blue-900/50 rounded-full flex items-center justify-center text-blue-400 font-bold flex-shrink-0">
+                                3</div>
+                            <b class="text-white">Baujahr</b>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-slate-900/80 p-4 rounded-xl border border-white/10 text-center italic text-blue-300 font-mono text-[10px] sm:text-[11px] shadow-lg">
+                        y = m₁·PS + m₂·ccm + m₃·Jahr + n
+                    </div>
+                </div>
+
+                <div
+                    class="relative dashboard overflow-hidden h-[250px] sm:h-[300px] md:h-full flex items-center justify-center min-h-[250px]">
+                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800"
+                        class="w-full h-full object-cover" alt="Modernes Auto">
+                    <div
+                        class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-4 py-2 sm:px-6 sm:py-4 rounded-2xl border border-white/10 shadow-2xl">
+                        <div class="text-[8px] sm:text-[10px] text-slate-400 uppercase tracking-widest mb-1">Vorhersage
+                        </div>
+                        <div class="text-2xl sm:text-4xl font-bold text-green-400 font-mono">7.2 L</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 pb-12 lg:pb-0">
+                    <div class="dashboard p-4 w-full bg-slate-900/50 scale-95 border-white/5 shadow-xl">
+                        <svg viewBox="0 0 600 400" class="w-full h-auto">
+                            <!-- Network Connections -->
+                            <g opacity="0.2" stroke="white" stroke-width="1.5">
+                                <line x1="80" y1="100" x2="300" y2="100" />
+                                <line x1="80" y1="100" x2="300" y2="200" />
+                                <line x1="80" y1="100" x2="300" y2="300" />
+                                <line x1="80" y1="200" x2="300" y2="100" />
+                                <line x1="80" y1="200" x2="300" y2="200" />
+                                <line x1="80" y1="200" x2="300" y2="300" />
+                                <line x1="80" y1="300" x2="300" y2="100" />
+                                <line x1="80" y1="300" x2="300" y2="200" />
+                                <line x1="80" y1="300" x2="300" y2="300" />
+                                <line x1="300" y1="100" x2="520" y2="200" />
+                                <line x1="300" y1="200" x2="520" y2="200" />
+                                <line x1="300" y1="300" x2="520" y2="200" />
+                            </g>
+                            <g stroke="#3b82f6" stroke-width="4" opacity="0.4">
+                                <line x1="80" y1="100" x2="300" y2="100" />
+                                <line x1="80" y1="200" x2="300" y2="200" />
+                                <line x1="80" y1="300" x2="300" y2="300" />
+                                <line x1="300" y1="100" x2="520" y2="200" />
+                                <line x1="300" y1="200" x2="520" y2="200" />
+                                <line x1="300" y1="300" x2="520" y2="200" />
+                            </g>
+                            <!-- All Hidden Neurons with blue borders masking connections -->
+                            <circle cx="300" cy="100" r="25" class="node-base" />
+                            <circle cx="300" cy="200" r="30" class="node-base" />
+                            <circle cx="300" cy="300" r="25" class="node-base" />
+
+                            <circle cx="80" cy="100" r="30" class="node-base" />
+                            <circle cx="80" cy="200" r="30" class="node-base" />
+                            <circle cx="80" cy="300" r="30" class="node-base" />
+
+                            <circle cx="520" cy="200" r="40" class="node-base" />
+                            <text x="520" y="200" text-anchor="middle" dominant-baseline="middle" fill="white"
+                                font-size="12" font-weight="bold">y</text>
+                        </svg>
+                    </div>
+                    <div class="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Netzwerk-Struktur</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: MNIST -->
+    <div class="slide" id="slide-6">
+        <div class="slide-content-scroll">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6">
+                Bilderkennung: Jeder Pixel ein Input</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center flex-1">
+                <div class="flex flex-col gap-6">
+                    <div class="relative rounded-3xl overflow-hidden bg-white p-4 shadow-inner border border-slate-700">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png"
+                            class="w-full h-auto opacity-90" alt="MNIST">
+                        <div
+                            class="mt-4 md:mt-8 flex flex-col sm:flex-row items-center gap-4 md:gap-8 bg-slate-900 p-4 md:p-6 rounded-2xl border border-blue-500/20">
+                            <div id="mnist-zoom-pixel" class="mnist-pixel-grid"></div>
+                            <div class="text-center sm:text-left">
+                                <p class="text-white font-bold text-lg mb-1">Bilder als Gitter</p>
+                                <p class="text-slate-400 text-[10px] sm:text-xs leading-relaxed">Jedes Quadrat ist ein
+                                    Input-Neuron. Ein Bild ist für die KI nur eine lange Liste von Zahlen (0 bis 255).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <h3 class="text-xl md:text-2xl font-bold text-blue-400">Der MNIST-Datensatz</h3>
+                    <p class="text-slate-400 text-sm md:text-lg">Handgeschriebene Ziffern als Basis für das Training von
+                        Bild-KIs.</p>
+                    <div class="p-4 bg-slate-900/50 rounded-xl border border-white/5 space-y-1 text-xs md:text-sm">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Ressourcen</p>
+                        <ul class="space-y-1">
+                            <li><a href="https://docs.ultralytics.com/de/datasets/classify/mnist/" target="_blank"
+                                    class="link-style">MNIST Dokumentation</a></li>
+                            <li class="pt-1 italic text-slate-400">Tipp: <a
+                                    href="https://github.com/zalandoresearch/fashion-mnist" target="_blank"
+                                    class="link-style">Zalando Fashion MNIST</a> nutzt Kleidung.</li>
+                        </ul>
+                    </div>
+                    <div class="pro-tip p-4 md:p-6 rounded-2xl shadow-lg">
+                        <h4 class="text-green-400 font-bold mb-2 uppercase text-[10px] sm:text-xs md:text-sm"><i
+                                class="fa-solid fa-graduation-cap"></i> Farbbilder</h4>
+                        <p class="text-sm text-slate-200 leading-relaxed">Ein 28x28 Graustufenbild nutzt 784
+                            Eingangsneuronen. Bei <b>Farbbildern (RGB)</b> verdreifacht sich dieser Wert auf <b>2352
+                                Eingangsneuronen</b>.</p>
+                    </div>
+                    <div id="classification-result"
+                        class="inline-block px-8 py-4 bg-blue-600 rounded-full font-bold shadow-lg">Erkennung: Zahl 3
+                        (98%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Next Token Prediction -->
+    <div class="slide" id="slide-7">
+        <div class="slide-content-scroll">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 border-l-4 border-blue-500 pl-4 md:pl-6">Next
+                Token Prediction</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center flex-1">
+                <div class="space-y-6">
+                    <div
+                        class="bg-slate-800 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-blue-500 shadow-2xl">
+                        <p class="text-2xl md:text-3xl text-slate-300 italic mb-6 md:mb-8 text-center md:text-left">"Der
+                            Himmel ist..."</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <span class="w-12 md:w-16 font-bold text-green-400 text-sm md:text-base">blau</span>
+                                <div
+                                    class="flex-1 h-2 md:h-3 bg-slate-900 rounded-full border border-white/5 overflow-hidden">
+                                    <div class="h-full bg-green-500" style="width: 85%"></div>
+                                </div>
+                                <span class="text-[10px] md:text-xs font-mono">85%</span>
+                            </div>
+                            <div class="flex items-center gap-4 opacity-50">
+                                <span class="w-12 md:w-16 font-bold text-slate-400 text-sm md:text-base">groß</span>
+                                <div
+                                    class="flex-1 h-2 md:h-3 bg-slate-900 rounded-full border border-white/5 overflow-hidden">
+                                    <div class="h-full bg-blue-500" style="width: 10%"></div>
+                                </div>
+                                <span class="text-[10px] md:text-xs font-mono">10%</span>
+                            </div>
+                            <div class="flex items-center gap-4 opacity-30">
+                                <span class="w-12 md:w-16 font-bold text-slate-400 text-sm md:text-base">weg</span>
+                                <div
+                                    class="flex-1 h-2 md:h-3 bg-slate-900 rounded-full border border-white/5 overflow-hidden">
+                                    <div class="h-full bg-blue-500" style="width: 3%"></div>
+                                </div>
+                                <span class="text-[10px] md:text-xs font-mono">3%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm md:text-base">Das Netz berechnet die statistische Fortsetzung
+                        basierend auf allen Eingabe-Wörtern gleichzeitig.</p>
+                </div>
+
+                <div class="dashboard p-4 md:p-6 h-full flex flex-col items-center justify-center">
+                    <svg viewBox="0 0 600 400" class="w-full">
+                        <g opacity="0.15" stroke="white" stroke-width="1">
+                            <line x1="80" y1="80" x2="250" y2="100" />
+                            <line x1="80" y1="80" x2="250" y2="200" />
+                            <line x1="80" y1="80" x2="250" y2="300" />
+                            <line x1="80" y1="200" x2="250" y2="100" />
+                            <line x1="80" y1="200" x2="250" y2="200" />
+                            <line x1="80" y1="200" x2="250" y2="300" />
+                            <line x1="80" y1="320" x2="250" y2="100" />
+                            <line x1="80" y1="320" x2="250" y2="200" />
+                            <line x1="80" y1="320" x2="250" y2="300" />
+
+                            <line x1="250" y1="100" x2="480" y2="220" />
+                            <line x1="250" y1="200" x2="480" y2="220" />
+                            <line x1="250" y1="300" x2="480" y2="220" />
+                            <line x1="250" y1="100" x2="480" y2="320" />
+                            <line x1="250" y1="200" x2="480" y2="320" />
+                            <line x1="250" y1="300" x2="480" y2="320" />
+                        </g>
+
+                        <!-- Signal Path to "blau" -->
+                        <g class="signal-flow">
+                            <line x1="80" y1="80" x2="250" y2="100" />
+                            <line x1="80" y1="80" x2="250" y2="200" />
+                            <line x1="80" y1="80" x2="250" y2="300" />
+                            <line x1="80" y1="200" x2="250" y2="100" />
+                            <line x1="80" y1="200" x2="250" y2="200" />
+                            <line x1="80" y1="200" x2="250" y2="300" />
+                            <line x1="80" y1="320" x2="250" y2="100" />
+                            <line x1="80" y1="320" x2="250" y2="200" />
+                            <line x1="80" y1="320" x2="250" y2="300" />
+                            <line x1="250" y1="100" x2="480" y2="80" />
+                            <line x1="250" y1="200" x2="480" y2="80" />
+                            <line x1="250" y1="300" x2="480" y2="80" />
+                        </g>
+
+                        <!-- Neurons with consistent design masking the lines -->
+                        <circle cx="80" cy="80" r="30" class="node-base" />
+                        <text x="80" y="80" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9"
+                            font-weight="bold">Der</text>
+
+                        <circle cx="80" cy="200" r="30" class="node-base" />
+                        <text x="80" y="200" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9"
+                            font-weight="bold">Himmel</text>
+
+                        <circle cx="80" cy="320" r="30" class="node-base" />
+                        <text x="80" y="320" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9"
+                            font-weight="bold">ist</text>
+
+                        <circle cx="250" cy="100" r="32" class="node-base" />
+                        <circle cx="250" cy="200" r="32" class="node-base" />
+                        <circle cx="250" cy="300" r="32" class="node-base" />
+
+                        <circle cx="480" cy="80" r="45" fill="#1e293b" stroke="var(--accent-green)" stroke-width="4" />
+                        <text x="480" y="80" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="14"
+                            font-weight="bold">blau</text>
+
+                        <circle cx="480" cy="220" r="30" class="node-inactive" />
+                        <text x="480" y="220" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8"
+                            font-size="10">groß</text>
+
+                        <circle cx="480" cy="320" r="28" class="node-inactive" />
+                        <text x="480" y="320" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8"
+                            font-size="10">weg</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Outro -->
+    <div class="slide" id="slide-8">
+        <div class="flex-1 flex flex-col justify-center items-center text-center space-y-6 md:space-y-8">
+            <i class="fa-solid fa-comments text-blue-500 text-6xl md:text-9xl mb-2 md:mb-4"></i>
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight">Fragen & Diskussion</h1>
+            <p class="text-lg md:text-2xl text-slate-400">Vielen Dank für Ihre Aufmerksamkeit!</p>
+        </div>
+    </div>
+
+    <script>
+        let slideIdx = 0;
+        const totalNumSlides = 9;
+
+        let currentEpochNum = 1;
+        let batchVarM = 0.50;
+        let batchVarN = 10.00;
+        const loopBatchDataArr = [{ x: 1.2, y: 2.6 }, { x: 2.5, y: 4.8 }, { x: 3.8, y: 8.0 }, { x: 5.1, y: 10.2 }, { x: 6.4, y: 12.8 }];
+
+        function updateButtonsVisibility() {
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+            const counter = document.getElementById('slide-counter');
+            if (prev) prev.disabled = slideIdx === 0;
+            if (next) next.disabled = slideIdx === totalNumSlides - 1;
+            if (counter) counter.innerText = `${slideIdx + 1} / ${totalNumSlides}`;
+            if (slideIdx === 6) initMnistZoom();
+        }
+
+        function changeSlide(direction) {
+            const nextIdx = slideIdx + direction;
+            if (nextIdx >= 0 && nextIdx < totalNumSlides) {
+                document.getElementById(`slide-${slideIdx}`).classList.remove('active');
+                slideIdx = nextIdx;
+                document.getElementById(`slide-${slideIdx}`).classList.add('active');
+            }
+            updateButtonsVisibility();
+        }
+
+        function initMnistZoom() {
+            const container = document.getElementById('mnist-zoom-pixel');
+            if (!container) return;
+            container.innerHTML = '';
+            const points = [[7, 6], [10, 5], [13, 5], [16, 6], [19, 8], [19, 10], [17, 12], [14, 13], [16, 15], [19, 17], [19, 20], [17, 22], [14, 23], [11, 23], [8, 22]];
+            const grid = 28;
+            const strokeWidth = 1.8;
+            for (let r = 0; r < grid; r++) {
+                for (let c = 0; c < grid; c++) {
+                    const p = document.createElement('div');
+                    p.className = 'pixel';
+                    let minDist = Infinity;
+                    for (const [px, py] of points) {
+                        const d = Math.sqrt((r - py) ** 2 + (c - px) ** 2);
+                        if (d < minDist) minDist = d;
+                    }
+                    let intensity = Math.max(0, 1 - (minDist / strokeWidth));
+                    intensity = Math.pow(intensity, 1.2) * (0.8 + Math.random() * 0.4);
+                    const val = Math.floor(intensity * 255);
+                    p.style.background = `rgb(${val},${val},${val})`;
+                    container.appendChild(p);
+                }
+            }
+        }
+
+        function startRegressionAnim(mode) {
+            if (window.regBusy) return; window.regBusy = true;
+            const line = document.getElementById('reg-line-live');
+            const mLabel = document.getElementById('val-m');
+            const nLabel = document.getElementById('val-n');
+            const errLabel = document.getElementById('val-err');
+            line.style.opacity = 1;
+            let frame = 0; const total = 120;
+            const timer = setInterval(() => {
+                frame++; const prog = frame / total;
+                let osc = (mode === 'wild') ? Math.sin(frame * 0.4) * (1 - prog) * 180 : 0;
+                const currentM = -0.4 * prog + (mode === 'wild' ? Math.random() * 0.1 : 0);
+                const currentN = 260 - (30 * prog) + osc;
+                line.setAttribute('y1', currentN); line.setAttribute('y2', currentN + (420 * currentM));
+                mLabel.innerText = Math.abs(currentM).toFixed(2);
+                nLabel.innerText = ((260 - currentN) / 2).toFixed(1);
+                if (Math.abs(osc) > 20 || prog < 0.3) { errLabel.innerText = "HOCH"; errLabel.style.color = "var(--accent-red)"; }
+                else if (Math.abs(osc) > 5 || prog < 0.7) { errLabel.innerText = "MITTEL"; errLabel.style.color = "var(--accent-yellow)"; }
+                else { errLabel.innerText = "OPTIMAL"; errLabel.style.color = "var(--accent-green)"; }
+                if (frame >= total) { clearInterval(timer); window.regBusy = false; }
+            }, 30);
+        }
+
+        function runBatchForward() {
+            const btnFwd = document.getElementById('btnFwd');
+            if (!btnFwd) return;
+            btnFwd.disabled = true;
+            document.getElementById('loop-l1').classList.add('signal-flow');
+            document.getElementById('loop-l2').classList.add('signal-flow');
+            setTimeout(() => {
+                let totalLoss = 0;
+                loopBatchDataArr.forEach((p, i) => {
+                    const istVal = batchVarM * p.x + batchVarN;
+                    const abwVal = Math.abs(p.y - istVal);
+                    totalLoss += abwVal;
+                    document.getElementById(`ist-${i}`).innerText = istVal.toFixed(2);
+                    const abwEl = document.getElementById(`abw-${i}`);
+                    abwEl.innerText = abwVal.toFixed(2);
+                    if (abwVal > 1.2) abwEl.style.color = "var(--accent-red)";
+                    else if (abwVal > 0.4) abwEl.style.color = "var(--accent-yellow)";
+                    else abwEl.style.color = "var(--accent-green)";
+                });
+                const lossLabel = document.getElementById('loss-sum-label');
+                lossLabel.innerText = totalLoss.toFixed(2);
+                lossLabel.style.color = totalLoss > 5 ? "var(--accent-red)" : (totalLoss > 1.5 ? "var(--accent-yellow)" : "var(--accent-green)");
+                document.getElementById('loop-l1').classList.remove('signal-flow');
+                document.getElementById('loop-l2').classList.remove('signal-flow');
+                document.getElementById('btnBwd').disabled = false;
+            }, 1000);
+        }
+
+        function runBatchBackprop() {
+            const btnBwd = document.getElementById('btnBwd');
+            if (!btnBwd) return;
+            btnBwd.disabled = true;
+            document.getElementById('loop-l1').classList.add('backprop-flow');
+            document.getElementById('loop-l2').classList.add('backprop-flow');
+            setTimeout(() => {
+                if (currentEpochNum === 1) { batchVarM = 1.10; batchVarN = 6.20; }
+                else if (currentEpochNum === 2) { batchVarM = 1.55; batchVarN = 3.80; }
+                else if (currentEpochNum === 3) { batchVarM = 1.80; batchVarN = 2.10; }
+                else if (currentEpochNum === 4) { batchVarM = 1.95; batchVarN = 0.90; }
+                else if (currentEpochNum === 5) { batchVarM = 2.02; batchVarN = 0.35; }
+                else if (currentEpochNum === 6) { batchVarM = 2.00; batchVarN = 0.15; }
+                const mLbl = document.getElementById('loop-m-val');
+                const nLbl = document.getElementById('loop-n-val');
+                mLbl.textContent = `m = ${batchVarM.toFixed(2)}`;
+                nLbl.textContent = `n = ${batchVarN.toFixed(2)}`;
+                mLbl.classList.remove('value-pulse'); nLbl.classList.remove('value-pulse');
+                void mLbl.offsetWidth;
+                mLbl.classList.add('value-pulse'); nLbl.classList.add('value-pulse');
+                document.getElementById('loop-l1').classList.remove('backprop-flow');
+                document.getElementById('loop-l2').classList.remove('backprop-flow');
+                if (currentEpochNum < 6) {
+                    currentEpochNum++;
+                    document.getElementById('epoch-label').innerText = currentEpochNum + " / 6";
+                    setTimeout(() => {
+                        document.getElementById('btnFwd').disabled = false;
+                        for (let i = 0; i < 5; i++) {
+                            document.getElementById(`ist-${i}`).innerText = "-";
+                            document.getElementById(`abw-${i}`).innerText = "-";
+                            document.getElementById(`abw-${i}`).style.color = "inherit";
+                        }
+                        document.getElementById('loss-sum-label').innerText = "0.00";
+                        document.getElementById('loss-sum-label').style.color = "var(--accent-red)";
+                    }, 600);
+                } else {
+                    document.getElementById('success-box').classList.remove('hidden');
+                    document.getElementById('epoch-label').innerText = "Abgeschlossen";
+                }
+            }, 1200);
+        }
+
+        updateButtonsVisibility();
+    </script>
+</body>
+
+</html>
