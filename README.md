@@ -1,6 +1,6 @@
 # Public Training Artifacts
 
-Dieses Repository enthält öffentliche Übungen und Visualisierungen aus den internen Schulungskonzepten.
+Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulungen.
 
 ## KI im Alltag
 
