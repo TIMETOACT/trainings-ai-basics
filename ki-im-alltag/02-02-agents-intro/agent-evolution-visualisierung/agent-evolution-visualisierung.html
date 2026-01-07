@@ -28,7 +28,8 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             margin: 0;
-            overscroll-behavior-x: none;
+            overscroll-behavior: none;
+            /* Verhindert Browser-Navigation beim Swipen */
         }
 
         .bg-gradient-overlay {
@@ -390,7 +391,7 @@
 
         <!-- Slide 0: Intro -->
         <div class="slide active" id="slide-0">
-            <div class="max-w-4xl">
+            <div class="max-w-4xl text-center">
                 <i class="fa-solid fa-rocket text-blue-500 text-7xl mb-8"></i>
                 <h1 class="text-6xl font-bold mb-6 text-white leading-tight">Die KI-Evolution:<br><span
                         class="text-blue-500">Morgen arbeiten</span></h1>
@@ -618,7 +619,7 @@
 
         <!-- Slide 6: Reasoning & ReAct -->
         <div class="slide" id="slide-6">
-            <div class="max-w-5xl w-full">
+            <div class="max-w-5xl w-full text-center">
                 <h2 class="text-4xl font-bold text-center mb-12 text-green-400">ReAct: Denken + Handeln am Beispiel
                     Reiseplanung</h2>
                 <div class="grid grid-cols-3 gap-8">
@@ -751,33 +752,7 @@
         const totalSlides = 9;
         let isAnimating = false;
 
-        const modal = document.getElementById('image-modal');
-        const modalImg = document.getElementById('modal-img');
-
-        // Funktion zum Öffnen des Modals
-        function openModal(src) {
-            modalImg.src = src;
-            modal.style.display = 'flex';
-        }
-
-        // Funktion zum Schließen des Modals
-        function closeModal() {
-            modal.style.display = 'none';
-            modalImg.src = '';
-        }
-
-        // Event-Delegation für Bilder in Containern
-        document.addEventListener('click', e => {
-            const container = e.target.closest('.image-container');
-            if (container) {
-                const img = container.querySelector('img');
-                if (img) openModal(img.src);
-            }
-        });
-
-        // Schließen bei Klick auf das Overlay
-        modal.addEventListener('click', closeModal);
-
+        // Navigation UI Update
         function updateNavUI() {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -822,6 +797,72 @@
             }, 500);
         }
 
+        // --- Swipe Funktionalität für Trackpads und Touch ---
+        let lastScrollTime = 0;
+        const scrollCooldown = 800; // Zeit in ms zwischen den Wechseln
+        const swipeThreshold = 50;  // Empfindlichkeit
+
+        // 1. Trackpad (Zwei-Finger-Wischen löst oft wheel-Events mit deltaX aus)
+        window.addEventListener('wheel', (e) => {
+            // Wir prüfen deltaX für horizontales Scrollen
+            if (Math.abs(e.deltaX) > 20) {
+                const now = Date.now();
+                if (now - lastScrollTime > scrollCooldown) {
+                    if (e.deltaX > swipeThreshold) {
+                        handleNavRequest(1); // Swipe nach links (Inhalt nach rechts)
+                        lastScrollTime = now;
+                    } else if (e.deltaX < -swipeThreshold) {
+                        handleNavRequest(-1); // Swipe nach rechts
+                        lastScrollTime = now;
+                    }
+                }
+                e.preventDefault(); // Verhindert Browser-Back/Forward
+            }
+        }, { passive: false });
+
+        // 2. Touch-Geräte
+        let touchStartX = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    handleNavRequest(1); // Swipe nach links
+                } else {
+                    handleNavRequest(-1); // Swipe nach rechts
+                }
+            }
+        }, { passive: true });
+
+        // --- Modal Logik ---
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+
+        function openModal(src) {
+            modalImg.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            modalImg.src = '';
+        }
+
+        document.addEventListener('click', e => {
+            const container = e.target.closest('.image-container');
+            if (container) {
+                const img = container.querySelector('img');
+                if (img) openModal(img.src);
+            }
+        });
+
+        modal.addEventListener('click', closeModal);
+
+        // Key Listeners
         window.addEventListener('keydown', e => {
             if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') handleNavRequest(1);
             if (e.key === 'ArrowLeft') handleNavRequest(-1);
