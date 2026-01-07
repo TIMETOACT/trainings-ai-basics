@@ -28,8 +28,7 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             margin: 0;
-            overscroll-behavior-x: none;
-            /* Verhindert Browser-Navigation beim Swipen */
+            overscroll-behavior: none;
         }
 
         .bg-gradient-overlay {
@@ -55,7 +54,6 @@
             padding: 2rem 4rem;
             flex-direction: column;
             justify-content: center;
-            /* Gesamten Block vertikal zentrieren */
             align-items: center;
             background: transparent;
         }
@@ -73,7 +71,6 @@
             text-align: center;
         }
 
-        /* Animationen */
         .slide-in-right {
             animation: slideInRight var(--anim-speed) forwards;
         }
@@ -138,7 +135,6 @@
             }
         }
 
-        /* Kompakte Inhaltsstruktur */
         .slide-content-wrapper {
             width: 100%;
             max-width: 1100px;
@@ -150,7 +146,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Hellerer Header-Bereich */
         .header-area {
             background: var(--highlight-white);
             padding: 1.5rem 2.5rem;
@@ -181,7 +176,6 @@
             line-height: 1.5;
         }
 
-        /* Mittlerer Bereich (Bild & Beispiele) */
         .middle-area {
             display: flex;
             background: rgba(30, 41, 59, 0.4);
@@ -190,7 +184,6 @@
             align-items: center;
         }
 
-        /* Feste Bildgröße quadratisch */
         .image-container {
             width: 320px;
             height: 320px;
@@ -203,11 +196,6 @@
             align-items: center;
             justify-content: center;
             cursor: zoom-in;
-            transition: border-color 0.3s ease;
-        }
-
-        .image-container:hover {
-            border-color: var(--accent-blue);
         }
 
         .image-container img {
@@ -238,10 +226,8 @@
             color: var(--accent-blue);
             margin-bottom: 0.25rem;
             display: block;
-            opacity: 0.8;
         }
 
-        /* Hellerer Footer-Bereich (Best Practices) */
         .footer-area {
             background: var(--highlight-white);
             padding: 1.5rem 2.5rem;
@@ -274,16 +260,14 @@
             color: #94a3b8;
         }
 
-        /* Modal / Popup Styling (Alpha-Effekt) */
+        /* Modal */
         #image-modal {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 1000;
             background: rgba(0, 0, 0, 0.7);
-            /* Transparente Abdunklung */
             backdrop-filter: blur(4px);
-            /* Dezenter Unschärfe-Effekt */
             justify-content: center;
             align-items: center;
             cursor: zoom-out;
@@ -291,15 +275,71 @@
 
         #image-modal img {
             max-width: 80%;
-            /* Nicht komplett füllend */
             max-height: 80%;
             border-radius: 1rem;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
         }
 
-        /* Navigation */
+        /* Desktop Table */
+        .desktop-table-container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .desktop-table-container table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1.25rem;
+        }
+
+        .desktop-table-container th {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .desktop-table-container td {
+            padding: 1.25rem 1.5rem;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .desktop-table-container td:first-child {
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 700;
+            color: white;
+        }
+
+        .desktop-table-container td:last-child {
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bracket-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .visual-bracket {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+            height: 10px;
+            margin: 0 1rem;
+            border-radius: 6px 6px 0 0;
+        }
+
+        /* Navigation Controls */
         .nav-controls {
             position: fixed;
             bottom: 2rem;
@@ -343,20 +383,8 @@
             font-size: 0.9rem;
         }
 
-        .bracket-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            width: 100%;
-        }
-
-        .visual-bracket {
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-bottom: none;
-            height: 10px;
-            margin: 0 1rem;
-            border-radius: 6px 6px 0 0;
+        .mobile-tabs-view {
+            display: none;
         }
 
         /* --- Mobile Optimierungen --- */
@@ -371,7 +399,6 @@
                 margin: 0 auto;
                 max-width: 100%;
                 max-height: calc(100vh - 10rem);
-                /* Begrenzung der Gesamthöhe */
                 display: flex;
                 flex-direction: column;
                 box-shadow: none;
@@ -400,7 +427,6 @@
                 margin-top: 0.5rem;
             }
 
-            /* Scrollbereich für den unteren Teil auf Mobile */
             .scrollable-content {
                 flex-grow: 1;
                 overflow-y: auto !important;
@@ -409,14 +435,9 @@
                 flex-direction: column;
             }
 
-            /* Sichtbare Scrollbalken für Mobile innerhalb des Containers */
             .scrollable-content::-webkit-scrollbar {
                 width: 4px;
                 display: block;
-            }
-
-            .scrollable-content::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.05);
             }
 
             .scrollable-content::-webkit-scrollbar-thumb {
@@ -434,7 +455,7 @@
             .image-container {
                 width: 100%;
                 height: auto;
-                aspect-ratio: 1 / 1;
+                aspect-ratio: 1/1;
                 max-width: 240px;
             }
 
@@ -464,19 +485,75 @@
                 padding: 0.75rem;
                 border-radius: 4rem;
                 border: 1px solid rgba(255, 255, 255, 0.15);
-                box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5);
             }
 
-            #slide-7 h2 {
-                font-size: 1.4rem;
-            }
-
-            #slide-7 table {
-                font-size: 0.6rem;
-            }
-
-            #slide-7 .bracket-container {
+            .desktop-table-container {
                 display: none;
+            }
+
+            .mobile-tabs-view {
+                display: block;
+                width: 100%;
+            }
+
+            .tab-nav {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+                justify-content: space-between;
+            }
+
+            .tab-btn {
+                flex: 1;
+                padding: 0.6rem 0.2rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0.5rem;
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: #94a3b8;
+            }
+
+            .tab-btn.active {
+                background: var(--accent-blue);
+                color: white;
+                border-color: white;
+            }
+
+            .mobile-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 0.5rem;
+            }
+
+            .mobile-table td {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .mobile-table td:first-child {
+                font-weight: 700;
+                color: white;
+                width: 35%;
+                border-top-left-radius: 0.5rem;
+                border-bottom-left-radius: 0.5rem;
+            }
+
+            .mobile-table td:last-child {
+                color: #cbd5e1;
+                border-top-right-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+            }
+
+            #slide-8 {
+                justify-content: flex-start;
+            }
+
+            #slide-8 .slide-content-wrapper {
+                max-height: none;
+                overflow: visible;
             }
         }
 
@@ -513,35 +590,29 @@
         <div class="slide" id="slide-1">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-4 md:gap-6">
-                        <span class="stage-label" style="background-color: #334155;">Stufe 1</span>
+                    <div class="flex items-center gap-4 md:gap-6"><span class="stage-label"
+                            style="background-color: #334155;">Stufe 1</span>
                         <h2 class="text-xl md:text-3xl font-bold text-white">Die manuelle Welt</h2>
                     </div>
-                    <div class="description-box border-slate-500">
-                        Wir sind das "Bindeglied" zwischen Systemen. Jede Information wird händisch gelesen, kopiert und
-                        unter Zeitdruck übertragen.
-                    </div>
+                    <div class="description-box border-slate-500">Wir sind das "Bindeglied" zwischen Systemen. Jede
+                        Information wird händisch gelesen, kopiert und übertragen.</div>
                 </div>
                 <div class="scrollable-content">
                     <div class="middle-area">
-                        <div class="image-container">
-                            <img src="stufe1.jpg" alt="[Manuelle Arbeit]" onerror="this.style.display='none'">
+                        <div class="image-container"><img src="stufe1.jpg" alt="S1" onerror="this.style.display='none'">
                         </div>
                         <div class="examples-grid">
                             <div class="example-card"><span class="role-label">Vertrieb</span>
-                                <p class="text-sm">Sucht Leads auf LinkedIn und kopiert jeden Namen einzeln ins CRM.</p>
+                                <p class="text-sm">Leads auf LinkedIn suchen und einzeln ins CRM kopieren.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Controlling</span>
-                                <p class="text-sm">Addiert Summen mit Stift und Taschenrechner aus gedruckten Listen.
-                                </p>
+                                <p class="text-sm">Addiert Summen mit Stift und Taschenrechner aus Listen.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Sekretariat</span>
-                                <p class="text-sm">Vergleicht drei Kalenderfenster händisch, um Terminlücken zu finden.
-                                </p>
+                                <p class="text-sm">Drei Kalenderfenster händisch vergleichen, um Lücken zu finden.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Führungskraft</span>
-                                <p class="text-sm">Durchsucht unzählige Unterordner manuell nach Projekt-Status-Updates.
-                                </p>
+                                <p class="text-sm">Unterordner manuell nach Projekt-Status-Updates durchsuchen.</p>
                             </div>
                         </div>
                     </div>
@@ -553,36 +624,29 @@
         <div class="slide" id="slide-2">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-4 md:gap-6">
-                        <span class="stage-label" style="background-color: #854d0e;">Stufe 2</span>
+                    <div class="flex items-center gap-4 md:gap-6"><span class="stage-label"
+                            style="background-color: #854d0e;">Stufe 2</span>
                         <h2 class="text-xl md:text-3xl font-bold text-white">Regeln & Automatisierung</h2>
                     </div>
-                    <div class="description-box border-yellow-500">
-                        Die Ära der Regeln. Programme erledigen Aufgaben nach festen Vorgaben ("Wenn-Dann"). Effizient,
-                        aber unflexibel bei Abweichungen.
-                    </div>
+                    <div class="description-box border-yellow-500">Die Ära der Regeln. Programme erledigen Aufgaben nach
+                        festen Vorgaben ("Wenn-Dann").</div>
                 </div>
                 <div class="scrollable-content">
                     <div class="middle-area">
-                        <div class="image-container">
-                            <img src="stufe2.jpg" alt="[Automatisierung]" onerror="this.style.display='none'">
+                        <div class="image-container"><img src="stufe2.jpg" alt="S2" onerror="this.style.display='none'">
                         </div>
                         <div class="examples-grid">
                             <div class="example-card"><span class="role-label">Vertrieb</span>
-                                <p class="text-sm">Nutzt ein CRM-Plugin, das LinkedIn-Adressen automatisch importiert
-                                    und filtert.</p>
+                                <p class="text-sm">CRM-Plugin importiert LinkedIn-Adressen automatisch.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Controlling</span>
-                                <p class="text-sm">Ein Excel-Makro rechnet Summen automatisch nach starren Kriterien
-                                    zusammen.</p>
+                                <p class="text-sm">Excel-Makro rechnet Summen nach starren Kriterien zusammen.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Sekretariat</span>
-                                <p class="text-sm">Ein Online-Buchungstool lässt Externe Termine in festen Slots
-                                    einbuchen.</p>
+                                <p class="text-sm">Online-Buchungstool lässt Externe Termine in festen Slots buchen.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Führungskraft</span>
-                                <p class="text-sm">Ein Dashboard zeigt Projekt-Ampeln basierend auf festen
-                                    Schwellenwerten.</p>
+                                <p class="text-sm">Dashboard zeigt Projekt-Ampeln basierend auf Schwellenwerten.</p>
                             </div>
                         </div>
                     </div>
@@ -594,36 +658,29 @@
         <div class="slide" id="slide-3">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-4 md:gap-6">
-                        <span class="stage-label" style="background-color: #1e40af;">Stufe 3</span>
+                    <div class="flex items-center gap-4 md:gap-6"><span class="stage-label"
+                            style="background-color: #1e40af;">Stufe 3</span>
                         <h2 class="text-xl md:text-3xl font-bold text-white">LLM: Das Gehirn im Glas</h2>
                     </div>
-                    <div class="description-box border-blue-500">
-                        Die KI versteht Sprache und Kontext. Als isoliertes "Gehirn" kann sie Texte perfekt analysieren,
-                        hat aber noch keine Hände für die Außenwelt.
-                    </div>
+                    <div class="description-box border-blue-500">Die KI versteht Sprache und Kontext. Sie kann Texte
+                        analysieren, hat aber noch keine Hände für die Außenwelt.</div>
                 </div>
                 <div class="scrollable-content">
                     <div class="middle-area">
-                        <div class="image-container">
-                            <img src="stufe3.jpg" alt="[LLM]" onerror="this.style.display='none'">
+                        <div class="image-container"><img src="stufe3.jpg" alt="S3" onerror="this.style.display='none'">
                         </div>
                         <div class="examples-grid">
                             <div class="example-card"><span class="role-label">Vertrieb</span>
-                                <p class="text-sm">Lässt die KI basierend auf LinkedIn-Profilen personalisierte
-                                    Akquise-Mails schreiben.</p>
+                                <p class="text-sm">KI schreibt personalisierte Akquise-Mails basierend auf Profilen.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Controlling</span>
-                                <p class="text-sm">Kopiert Tabellen in den Chat zur schnellen Analyse von Trends und
-                                    Abweichungen.</p>
+                                <p class="text-sm">Kopiert Tabellen in den Chat zur schnellen Analyse von Trends.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Sekretariat</span>
-                                <p class="text-sm">Gibt Verfügbarkeiten ins LLM ein und lässt einen optimalen
-                                    Terminvorschlag generieren.</p>
+                                <p class="text-sm">LLM generiert optimalen Terminvorschlag aus Verfügbarkeiten.</p>
                             </div>
                             <div class="example-card"><span class="role-label">Führungskraft</span>
-                                <p class="text-sm">Lässt lange Projektberichte in prägnante Bulletpoints für das
-                                    Management kürzen.</p>
+                                <p class="text-sm">Kürzt lange Berichte in prägnante Management-Zusammenfassungen.</p>
                             </div>
                         </div>
                     </div>
@@ -635,40 +692,36 @@
         <div class="slide" id="slide-4">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-4 md:gap-6">
-                        <span class="stage-label" style="background-color: #6b21a8;">Stufe 4</span>
+                    <div class="flex items-center gap-4 md:gap-6"><span class="stage-label"
+                            style="background-color: #6b21a8;">Stufe 4</span>
                         <h2 class="text-xl md:text-3xl font-bold text-white">Der KI-Agent: Hände & Füße</h2>
                     </div>
-                    <div class="description-box border-purple-500">
-                        Vom Denken zum Handeln. Der Agent nutzt das LLM und Werkzeuge, um Aufträge autonom in Ihren
-                        Programmen auszuführen.
-                    </div>
+                    <div class="description-box border-purple-500">Vom Denken zum Handeln. Der Agent nutzt das LLM und
+                        Werkzeuge, um Aufträge autonom auszuführen.</div>
                 </div>
                 <div class="scrollable-content">
                     <div class="middle-area">
-                        <div class="image-container">
-                            <img src="stufe4.jpg" alt="[KI Agent]" onerror="this.style.display='none'">
+                        <div class="image-container"><img src="stufe4.jpg" alt="S4" onerror="this.style.display='none'">
                         </div>
                         <div class="examples-grid">
                             <div class="example-card border-l-2 border-purple-500"><span
                                     class="role-label">Vertrieb</span>
-                                <p class="text-sm">Agent recherchiert Leads autonom, pflegt sie ins CRM ein und erstellt
-                                    die Akquise-Mail.</p>
+                                <p class="text-sm">Agent recherchiert Leads, pflegt sie ins CRM ein und erstellt
+                                    Akquise-Mails.</p>
                             </div>
                             <div class="example-card border-l-2 border-purple-500"><span
                                     class="role-label">Controlling</span>
-                                <p class="text-sm">Überwacht Budgets live und meldet Abweichungen proaktiv via Slack an
-                                    Verantwortliche.</p>
+                                <p class="text-sm">Überwacht Budgets live und meldet Abweichungen proaktiv via Slack.
+                                </p>
                             </div>
                             <div class="example-card border-l-2 border-purple-500"><span
                                     class="role-label">Sekretariat</span>
-                                <p class="text-sm">Löst Kalender-Konflikte durch autonomes Verschieben von Terminen
-                                    niedriger Priorität.</p>
+                                <p class="text-sm">Löst Kalender-Konflikte durch autonomes Verschieben von Terminen.</p>
                             </div>
                             <div class="example-card border-l-2 border-purple-500"><span
                                     class="role-label">Führungskraft</span>
-                                <p class="text-sm">Sucht in Statusberichten; bei Problemen oder Verzug plant er direkt
-                                    Meetings mit Teams.</p>
+                                <p class="text-sm">Sucht in Berichten; bei Problemen plant er direkt Meetings mit Teams.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -677,14 +730,14 @@
                             <div class="bp-item">
                                 <div class="bp-title text-green-400">Human In The Loop</div>
                                 <div class="bp-line"></div>
-                                <p class="bp-text">Der Agent fordert bei wichtigen Aktionen (z.B. Mail-Versand oder
-                                    Buchung) zwingend eine Bestätigung ein.</p>
+                                <p class="bp-text">Agent fordert bei wichtigen Aktionen (Zahlungen, Mails) eine
+                                    Bestätigung ein.</p>
                             </div>
                             <div class="bp-item">
                                 <div class="bp-title text-blue-400">Stabilität</div>
                                 <div class="bp-line"></div>
-                                <p class="bp-text">Fixierte LLM-Versionen verhindern, dass automatische Updates des
-                                    Gehirns den Agenten unvorhersehbar verändern.</p>
+                                <p class="bp-text">Fixierte LLM-Versionen verhindern unvorhersehbarer
+                                    Verhaltensänderungen.</p>
                             </div>
                         </div>
                     </div>
@@ -696,43 +749,40 @@
         <div class="slide" id="slide-5">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-4 md:gap-6">
-                        <span class="stage-label" style="background-color: #1e3a8a;">ChatGPT</span>
+                    <div class="flex items-center gap-6"><span class="stage-label"
+                            style="background-color: #1e3a8a;">ChatGPT</span>
                         <h2 class="text-xl md:text-3xl font-bold text-white">Der Agent im Sandkasten</h2>
                     </div>
-                    <div class="description-box border-blue-400">
-                        ChatGPT ist bereits ein Agent mit Werkzeugen (Browsing, Analyse), arbeitet aber in einer
-                        geschützten Sandbox-Umgebung.
-                    </div>
+                    <div class="description-box border-blue-400">ChatGPT arbeitet in einer geschützten Sandbox-Umgebung
+                        mit nützlichen Werkzeugen.</div>
                 </div>
                 <div class="scrollable-content">
                     <div class="middle-area">
-                        <div class="image-container">
-                            <img src="chatgpt.jpg" alt="[ChatGPT Sandbox]" onerror="this.style.display='none'">
-                        </div>
+                        <div class="image-container"><img src="chatgpt.jpg" alt="ChatGPT"
+                                onerror="this.style.display='none'"></div>
                         <div class="examples-grid">
-                            <div class="example-card">
-                                <span class="role-label" style="color: var(--accent-green)">Möglichkeiten</span>
+                            <div class="example-card"><span class="role-label"
+                                    style="color: var(--accent-green)">Möglichkeiten</span>
                                 <ul class="text-xs space-y-2 mt-2">
                                     <li class="flex gap-2"><i class="fa-solid fa-globe text-blue-400"></i>
-                                        Internet-Suche (Browsing)</li>
+                                        Internet-Suche</li>
                                     <li class="flex gap-2"><i class="fa-solid fa-file-pdf text-blue-400"></i> Analyse
-                                        hochgeladener Dateien</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-copy text-blue-400"></i> Ausgabe: Texte
-                                        zum Kopieren</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-download text-blue-400"></i> Ausgabe:
-                                        Bilder & Dateien zum Download</li>
+                                        von Dateien</li>
+                                    <li class="flex gap-2"><i class="fa-solid fa-copy text-blue-400"></i> Texte zum
+                                        Kopieren</li>
+                                    <li class="flex gap-2"><i class="fa-solid fa-download text-blue-400"></i>
+                                        Datei-Downloads</li>
                                 </ul>
                             </div>
-                            <div class="example-card">
-                                <span class="role-label" style="color: var(--accent-red)">Die Grenze</span>
+                            <div class="example-card"><span class="role-label" style="color: var(--accent-red)">Die
+                                    Grenze</span>
                                 <ul class="text-xs space-y-2 mt-2">
-                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Kein Zugriff
-                                        auf interne E-Mails</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Keine Änderung
-                                        an Firmendaten</li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Kein Zugriff
-                                        auf lokales Dateisystem</li>
+                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Keine internen
+                                        Mails</li>
+                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Keine
+                                        Firmendaten-Änderung</li>
+                                    <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Kein lokales
+                                        Dateisystem</li>
                                 </ul>
                             </div>
                         </div>
@@ -744,25 +794,22 @@
         <!-- Slide 6: Reasoning & ReAct -->
         <div class="slide" id="slide-6">
             <div class="max-w-5xl w-full text-center px-4">
-                <h2 class="text-2xl md:text-4xl font-bold text-center mb-12 text-green-400">ReAct: Denken + Handeln am
-                    Beispiel Reiseplanung</h2>
+                <h2 class="text-2xl md:text-4xl font-bold mb-12 text-green-400">ReAct am Beispiel Reiseplanung</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-green-500">
-                        <h4 class="font-bold text-green-500 mb-2 text-lg text-center">1. Reasoning</h4>
-                        <p class="text-sm text-slate-400 text-center leading-relaxed">Agent sammelt Daten aus
-                            Richtlinien und Prompt. Er nutzt das LLM für die Erarbeitung eines Plans mit Teilschritten
-                            und zur Abwägung von Alternativen.</p>
+                    <div class="bg-slate-800/60 p-6 rounded-2xl border-t-4 border-green-500">
+                        <h4 class="font-bold text-green-500 mb-2">1. Reasoning</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed">Agent nutzt LLM zur Erarbeitung eines Plans
+                            mit Teilschritten und zur Abwägung von Alternativen.</p>
                     </div>
-                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-blue-500">
-                        <h4 class="font-bold text-blue-500 mb-2 text-lg text-center">2. Acting</h4>
-                        <p class="text-sm text-slate-400 text-center leading-relaxed">Agent nutzt Buchungstools für die
-                            Buchung von Hotels und Zügen und sendet die Tickets an den Reisenden. Er nutzt das LLM
-                            erneut für die Formulierung von Reiseplänen und Zusammenfassungen.</p>
+                    <div class="bg-slate-800/60 p-8 rounded-2xl border-t-4 border-blue-500">
+                        <h4 class="font-bold text-blue-500 mb-2">2. Acting</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed">Agent nutzt Buchungstools für Hotels/Zügen.
+                            LLM formuliert Reisepläne und Zusammenfassungen.</p>
                     </div>
-                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-purple-500">
-                        <h4 class="font-bold text-purple-400 mb-2 text-lg text-center">3. Human In The Loop</h4>
-                        <p class="text-sm text-slate-300 italic text-center leading-relaxed">Vor dem finalen Abschluss
-                            der Buchung wird der Reisende um Bestätigung gebeten, ob der Plan so passt.</p>
+                    <div class="bg-slate-800/60 p-8 rounded-2xl border-t-4 border-purple-500">
+                        <h4 class="font-bold text-purple-400 mb-2">3. Human In The Loop</h4>
+                        <p class="text-sm text-slate-300 italic leading-relaxed">Vor dem finalen Abschluss der Buchung
+                            wird der Reisende um Bestätigung des Plans gebeten.</p>
                     </div>
                 </div>
             </div>
@@ -770,8 +817,9 @@
 
         <!-- Slide 7: Zusammenfassung -->
         <div class="slide" id="slide-7">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-white px-4">Evolution im Überblick</h2>
-            <div class="max-w-5xl w-full px-4">
+            <h2 class="text-2xl md:text-4xl font-bold text-center mb-10 text-white px-4">Evolution im Überblick</h2>
+
+            <div class="desktop-table-container mx-auto">
                 <div class="bracket-container mx-auto">
                     <div></div>
                     <div>
@@ -783,94 +831,101 @@
                         <div class="visual-bracket border-purple-900/50"></div>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-separate border-spacing-y-2">
-                        <thead>
-                            <tr class="text-slate-500 text-[0.6rem] uppercase tracking-widest bg-white/5">
-                                <th class="p-2 md:p-4 rounded-l-xl">Rolle</th>
-                                <th class="p-2 md:p-4 text-center">Stufe 1 (Hand)</th>
-                                <th class="p-2 md:p-4 text-center">Stufe 2 (Regel)</th>
-                                <th class="p-2 md:p-4 text-center rounded-r-xl">Stufe 4 (Agent)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-300 text-[0.65rem] md:text-xs">
-                            <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Vertrieb
-                                </td>
-                                <td class="p-2 md:p-4 text-center opacity-60">LinkedIn Kopieren</td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Plugin Import</td>
-                                <td
-                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
-                                    CRM Autopilot</td>
-                            </tr>
-                            <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Controlling
-                                </td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Taschenrechner</td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Excel-Makros</td>
-                                <td
-                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
-                                    Live-Monitoring</td>
-                            </tr>
-                            <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Sekretariat
-                                </td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Kalender-Blättern</td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Buchungstools</td>
-                                <td
-                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
-                                    Termin-Auto-Mgmt</td>
-                            </tr>
-                            <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Führung</td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Ordner suchen</td>
-                                <td class="p-2 md:p-4 text-center opacity-60">Dashboards</td>
-                                <td
-                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
-                                    Assistenz-Agent</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table>
+                    <thead>
+                        <tr class="text-slate-500 text-[0.7rem] uppercase">
+                            <th class="text-left">Rolle</th>
+                            <th class="text-center">Stufe 1</th>
+                            <th class="text-center">Stufe 2</th>
+                            <th class="text-center">Stufe 4</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-200">
+                        <tr>
+                            <td>Vertrieb</td>
+                            <td class="text-center opacity-60">LinkedIn Kopieren</td>
+                            <td class="text-center opacity-60">Plugin Import</td>
+                            <td class="text-center text-purple-400 font-bold">CRM Autopilot</td>
+                        </tr>
+                        <tr>
+                            <td>Controlling</td>
+                            <td class="text-center opacity-60">Taschenrechner</td>
+                            <td class="text-center opacity-60">Excel-Makros</td>
+                            <td class="text-center text-purple-400 font-bold">Live-Monitoring</td>
+                        </tr>
+                        <tr>
+                            <td>Sekretariat</td>
+                            <td class="text-center opacity-60">Kalender-Blättern</td>
+                            <td class="text-center opacity-60">Buchungstools</td>
+                            <td class="text-center text-purple-400 font-bold">Termin-Mgmt</td>
+                        </tr>
+                        <tr>
+                            <td>Führung</td>
+                            <td class="text-center opacity-60">Ordner suchen</td>
+                            <td class="text-center opacity-60">Dashboards</td>
+                            <td class="text-center text-purple-400 font-bold">Assistenz-Agent</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-tabs-view">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab(1, this)">Stufe 1</button>
+                    <button class="tab-btn" onclick="switchTab(2, this)">Stufe 2</button>
+                    <button class="tab-btn" onclick="switchTab(4, this)">Stufe 4</button>
                 </div>
+                <table class="mobile-table">
+                    <tr>
+                        <td>Vertrieb</td>
+                        <td id="cell-vertrieb">LinkedIn Kopieren</td>
+                    </tr>
+                    <tr>
+                        <td>Controlling</td>
+                        <td id="cell-controlling">Taschenrechner</td>
+                    </tr>
+                    <tr>
+                        <td>Sekretariat</td>
+                        <td id="cell-sekretariat">Kalender-Blättern</td>
+                    </tr>
+                    <tr>
+                        <td>Führung</td>
+                        <td id="cell-fuerung">Ordner suchen</td>
+                    </tr>
+                </table>
             </div>
         </div>
 
         <!-- Slide 8: Datenschutz -->
         <div class="slide" id="slide-8">
-            <div
-                class="max-w-4xl mx-auto text-center border-l-8 border-red-500 bg-slate-900/40 p-8 md:p-12 rounded-3xl relative overflow-hidden">
-                <i
-                    class="fa-solid fa-user-shield absolute -right-10 -bottom-10 text-[150px] md:text-[200px] opacity-5"></i>
-                <div class="mb-8 relative z-10 text-center">
-                    <i class="fa-solid fa-shield-halved text-red-500 text-5xl md:text-6xl mb-6"></i>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white">Datenschutz & Datenfluss</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 relative z-10 text-center">
-                    <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/20">
-                        <b class="text-red-400 block mb-2">Deine Prompts</b>
-                        <p class="text-xs text-slate-400">Befehle und Texte, die Du direkt an die KI schickst.</p>
+            <div class="slide-content-wrapper" style="box-shadow: none; border: none; background: transparent;">
+                <div
+                    class="max-w-4xl mx-auto text-center border-l-8 border-red-500 bg-slate-900/40 p-8 md:p-12 rounded-3xl relative overflow-hidden">
+                    <i class="fa-solid fa-user-shield absolute -right-10 -bottom-10 text-[150px] opacity-5"></i>
+                    <div class="mb-8 relative z-10 text-center"><i
+                            class="fa-solid fa-shield-halved text-red-500 text-5xl mb-6"></i>
+                        <h2 class="text-3xl md:text-4xl font-bold text-white">Datenschutz & Datenfluss</h2>
                     </div>
-                    <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/20">
-                        <b class="text-red-400 block mb-2">Kontext</b>
-                        <p class="text-xs text-slate-400">Deine Dateien, E-Mails oder Datenbanken, die der Agent liest.
-                        </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 relative z-10 text-center">
+                        <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/20 text-center"><b
+                                class="text-red-400 block mb-2">Deine Prompts</b>
+                            <p class="text-xs text-slate-400">Texte, die Du direkt an die KI schickst.</p>
+                        </div>
+                        <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/20 text-center"><b
+                                class="text-red-400 block mb-2">Kontext</b>
+                            <p class="text-xs text-slate-400">Dateien oder Datenbanken, die der Agent liest.</p>
+                        </div>
                     </div>
+                    <p class="text-base md:text-lg text-slate-300 relative z-10 leading-relaxed">⚠️ <b>Wichtig:</b>
+                        Deine Daten verlassen Dein System. Nutze für sensible Daten nur offiziell freigegebene LLMs.</p>
                 </div>
-                <p class="text-base md:text-lg text-slate-300 relative z-10 leading-relaxed">
-                    ⚠️ <b>Wichtig:</b> Deine Daten verlassen Dein System, um vom LLM verarbeitet zu werden. Nutze für
-                    sensible Daten nur offiziell freigegebene LLMs.
-                </p>
             </div>
         </div>
 
     </div>
 
-    <!-- Modal für Bild-Vergrößerung -->
-    <div id="image-modal">
-        <img id="modal-img" src="" alt="Vergrößertes Bild">
-    </div>
+    <div id="image-modal"><img id="modal-img" src="" alt="Vergrößert"></div>
 
-    <!-- Navigation Controls -->
     <div class="nav-controls">
         <div id="slide-counter" class="slide-counter">1 / 9</div>
         <button onclick="handleNavRequest(-1)" id="prevBtn" class="nav-btn"><i
@@ -884,7 +939,22 @@
         const totalSlides = 9;
         let isAnimating = false;
 
-        // Navigation UI Update
+        const tableData = {
+            1: ["LinkedIn Kopieren", "Taschenrechner", "Kalender-Blättern", "Ordner suchen"],
+            2: ["Plugin Import", "Excel-Makros", "Buchungstools", "Dashboards"],
+            4: ["CRM Autopilot", "Live-Monitoring", "Termin-Mgmt", "Assistenz-Agent"]
+        };
+
+        function switchTab(stage, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const data = tableData[stage];
+            document.getElementById('cell-vertrieb').innerText = data[0];
+            document.getElementById('cell-controlling').innerText = data[1];
+            document.getElementById('cell-sekretariat').innerText = data[2];
+            document.getElementById('cell-fuerung').innerText = data[3];
+        }
+
         function updateNavUI() {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -898,9 +968,7 @@
         function handleNavRequest(dir) {
             if (isAnimating) return;
             const nextIdx = slideIdx + dir;
-            if (nextIdx >= 0 && nextIdx < totalSlides) {
-                performTransition(slideIdx, nextIdx, dir);
-            }
+            if (nextIdx >= 0 && nextIdx < totalSlides) performTransition(slideIdx, nextIdx, dir);
         }
 
         function performTransition(oldIdx, newIdx, dir) {
@@ -929,71 +997,40 @@
             }, 500);
         }
 
-        // --- Swipe Funktionalität für Trackpads und Touch ---
+        // Swipe & Wheel Logik mit fixierter Richtungsabfrage
         let lastScrollTime = 0;
-        const scrollCooldown = 800; // Zeit in ms zwischen den Wechseln
-        const swipeThreshold = 50;  // Empfindlichkeit
-
-        // 1. Trackpad (Zwei-Finger-Wischen löst oft wheel-Events mit deltaX aus)
         window.addEventListener('wheel', (e) => {
-            // Wir prüfen deltaX für horizontales Scrollen
-            if (Math.abs(e.deltaX) > 20) {
-                const now = Date.now();
-                if (now - lastScrollTime > scrollCooldown) {
-                    if (e.deltaX > swipeThreshold) {
-                        handleNavRequest(1); // Swipe nach links (Inhalt nach rechts)
-                        lastScrollTime = now;
-                    } else if (e.deltaX < -swipeThreshold) {
-                        handleNavRequest(-1); // Swipe nach rechts
-                        lastScrollTime = now;
-                    }
-                }
+            const now = Date.now();
+            if (now - lastScrollTime < 800) return;
+
+            // Präzise Abfrage der horizontalen Scroll-Intensität
+            if (e.deltaX > 50) {
+                handleNavRequest(1);
+                lastScrollTime = now;
+            } else if (e.deltaX < -50) {
+                handleNavRequest(-1);
+                lastScrollTime = now;
             }
         }, { passive: true });
 
-        // 2. Touch-Geräte
         let touchStartX = 0;
-        window.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
+        window.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
         window.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    handleNavRequest(1); // Swipe nach links
-                } else {
-                    handleNavRequest(-1); // Swipe nach rechts
-                }
-            }
+            const diff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50) handleNavRequest(diff > 0 ? 1 : -1);
         }, { passive: true });
 
-        // --- Modal Logik ---
+        // Modal
         const modal = document.getElementById('image-modal');
         const modalImg = document.getElementById('modal-img');
-
-        function openModal(src) {
-            modalImg.src = src;
-            modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-            modalImg.src = '';
-        }
-
+        function openModal(src) { modalImg.src = src; modal.style.display = 'flex'; }
+        function closeModal() { modal.style.display = 'none'; modalImg.src = ''; }
         document.addEventListener('click', e => {
             const container = e.target.closest('.image-container');
-            if (container) {
-                const img = container.querySelector('img');
-                if (img) openModal(img.src);
-            }
+            if (container) openModal(container.querySelector('img').src);
         });
-
         modal.addEventListener('click', closeModal);
 
-        // Key Listeners
         window.addEventListener('keydown', e => {
             if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') handleNavRequest(1);
             if (e.key === 'ArrowLeft') handleNavRequest(-1);
