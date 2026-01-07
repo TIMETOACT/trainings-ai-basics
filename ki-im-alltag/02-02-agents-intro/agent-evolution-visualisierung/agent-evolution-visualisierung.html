@@ -54,6 +54,7 @@
             padding: 2rem 4rem;
             flex-direction: column;
             justify-content: center;
+            /* Gesamten Block vertikal zentrieren */
             align-items: center;
             background: transparent;
         }
@@ -71,6 +72,7 @@
             text-align: center;
         }
 
+        /* Animationen */
         .slide-in-right {
             animation: slideInRight var(--anim-speed) forwards;
         }
@@ -160,7 +162,6 @@
             padding: 0.5rem 1.25rem;
             border-radius: 0.5rem;
             font-size: 1.6rem;
-            /* Markante Größe für Stufenbezeichnung */
             font-weight: 800;
             font-family: monospace;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -185,7 +186,6 @@
             padding: 2rem 2.5rem;
             gap: 2.5rem;
             align-items: center;
-            /* Vertikale Zentrierung von Bild und Text-Raster */
         }
 
         /* Feste Bildgröße quadratisch */
@@ -200,6 +200,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: zoom-in;
+            transition: border-color 0.3s ease;
+        }
+
+        .image-container:hover {
+            border-color: var(--accent-blue);
         }
 
         .image-container img {
@@ -263,6 +269,31 @@
             font-size: 0.75rem;
             line-height: 1.5;
             color: #94a3b8;
+        }
+
+        /* Modal / Popup Styling (Alpha-Effekt) */
+        #image-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            /* Transparente Abdunklung */
+            backdrop-filter: blur(4px);
+            /* Dezenter Unschärfe-Effekt */
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        #image-modal img {
+            max-width: 80%;
+            /* Nicht komplett füllend */
+            max-height: 80%;
+            border-radius: 1rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
         }
 
         /* Navigation */
@@ -538,7 +569,7 @@
             </div>
         </div>
 
-        <!-- Slide 5: ChatGPT Sandbox (Layout-Update) -->
+        <!-- Slide 5: ChatGPT Sandbox -->
         <div class="slide" id="slide-5">
             <div class="slide-content-wrapper">
                 <div class="header-area">
@@ -558,7 +589,7 @@
                     <div class="examples-grid">
                         <div class="example-card">
                             <span class="role-label" style="color: var(--accent-green)">Möglichkeiten</span>
-                            <ul class="text-xs space-y-2 mt-2">
+                            <ul class="text-sm space-y-2 mt-2">
                                 <li class="flex gap-2"><i class="fa-solid fa-globe text-blue-400"></i> Internet-Suche
                                     (Browsing)</li>
                                 <li class="flex gap-2"><i class="fa-solid fa-file-pdf text-blue-400"></i> Analyse
@@ -571,7 +602,7 @@
                         </div>
                         <div class="example-card">
                             <span class="role-label" style="color: var(--accent-red)">Die Grenze</span>
-                            <ul class="text-xs space-y-2 mt-2">
+                            <ul class="text-sm space-y-2 mt-2">
                                 <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Kein Zugriff auf
                                     interne E-Mails</li>
                                 <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Keine Änderung an
@@ -585,7 +616,7 @@
             </div>
         </div>
 
-        <!-- Slide 6: Reasoning & ReAct (Reiseplanung Beispiel) -->
+        <!-- Slide 6: Reasoning & ReAct -->
         <div class="slide" id="slide-6">
             <div class="max-w-5xl w-full">
                 <h2 class="text-4xl font-bold text-center mb-12 text-green-400">ReAct: Denken + Handeln am Beispiel
@@ -672,7 +703,7 @@
             </div>
         </div>
 
-        <!-- Slide 8: Datenschutz (Finale Texte) -->
+        <!-- Slide 8: Datenschutz -->
         <div class="slide" id="slide-8">
             <div
                 class="max-w-4xl mx-auto text-center border-l-8 border-red-500 bg-slate-900/40 p-12 rounded-3xl relative overflow-hidden">
@@ -701,6 +732,11 @@
 
     </div>
 
+    <!-- Modal für Bild-Vergrößerung -->
+    <div id="image-modal">
+        <img id="modal-img" src="" alt="Vergrößertes Bild">
+    </div>
+
     <!-- Navigation Controls -->
     <div class="nav-controls">
         <div id="slide-counter" class="slide-counter">1 / 9</div>
@@ -714,6 +750,33 @@
         let slideIdx = 0;
         const totalSlides = 9;
         let isAnimating = false;
+
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+
+        // Funktion zum Öffnen des Modals
+        function openModal(src) {
+            modalImg.src = src;
+            modal.style.display = 'flex';
+        }
+
+        // Funktion zum Schließen des Modals
+        function closeModal() {
+            modal.style.display = 'none';
+            modalImg.src = '';
+        }
+
+        // Event-Delegation für Bilder in Containern
+        document.addEventListener('click', e => {
+            const container = e.target.closest('.image-container');
+            if (container) {
+                const img = container.querySelector('img');
+                if (img) openModal(img.src);
+            }
+        });
+
+        // Schließen bei Klick auf das Overlay
+        modal.addEventListener('click', closeModal);
 
         function updateNavUI() {
             const prevBtn = document.getElementById('prevBtn');
@@ -762,6 +825,7 @@
         window.addEventListener('keydown', e => {
             if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') handleNavRequest(1);
             if (e.key === 'ArrowLeft') handleNavRequest(-1);
+            if (e.key === 'Escape') closeModal();
         });
 
         window.onload = updateNavUI;
