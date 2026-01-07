@@ -357,28 +357,108 @@
             border-radius: 6px 6px 0 0;
         }
 
-        @media (max-width: 900px) {
+        /* --- Mobile Optimierungen --- */
+        @media (max-width: 768px) {
             .slide {
                 padding: 1rem;
+                justify-content: flex-start;
+                /* Verhindert Abschneiden oben bei langen Inhalten */
+                overflow-y: auto;
+                height: 100%;
+            }
+
+            #slide-0 h1 {
+                font-size: 3rem;
+            }
+
+            #slide-0 p {
+                font-size: 1.25rem;
+            }
+
+            .slide-content-wrapper {
+                margin-bottom: 5rem;
+                /* Platz für Navigations-Buttons lassen */
+            }
+
+            .header-area {
+                padding: 1rem 1.25rem;
+            }
+
+            .stage-label {
+                font-size: 1.1rem;
+                padding: 0.35rem 0.75rem;
+            }
+
+            .header-area h2 {
+                font-size: 1.25rem;
+            }
+
+            .description-box {
+                font-size: 0.9rem;
+                margin-top: 0.75rem;
             }
 
             .middle-area {
                 flex-direction: column;
+                padding: 1.25rem;
+                gap: 1.5rem;
             }
 
             .image-container {
-                width: 240px;
-                height: 240px;
+                width: 100%;
+                /* Volle Breite auf Mobile */
+                height: auto;
+                aspect-ratio: 1 / 1;
+                max-width: 280px;
+                /* Begrenzung für schmale Screens */
             }
 
             .examples-grid {
                 grid-template-columns: 1fr;
+                /* Einspaltig auf Mobile */
                 width: 100%;
+            }
+
+            .footer-area {
+                padding: 1rem 1.25rem;
             }
 
             .bp-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 1.25rem;
+            }
+
+            .nav-controls {
+                bottom: 1rem;
+                right: 1rem;
+                scale: 0.9;
+            }
+
+            /* Zusammenfassungs-Tabelle Optimierung */
+            #slide-7 h2 {
+                font-size: 1.5rem;
+            }
+
+            #slide-7 table {
+                font-size: 0.65rem;
+            }
+
+            #slide-7 .bracket-container {
+                display: none;
+            }
+
+            /* Zu kleinteilig auf Mobile */
+        }
+
+        /* Zusätzliche Anpassung für sehr kleine Bildschirme */
+        @media (max-height: 600px) {
+            .slide {
+                justify-content: flex-start;
+            }
+
+            .image-container {
+                width: 180px;
+                height: 180px;
             }
         }
     </style>
@@ -391,11 +471,12 @@
 
         <!-- Slide 0: Intro -->
         <div class="slide active" id="slide-0">
-            <div class="max-w-4xl text-center">
-                <i class="fa-solid fa-rocket text-blue-500 text-7xl mb-8"></i>
-                <h1 class="text-6xl font-bold mb-6 text-white leading-tight">Die KI-Evolution:<br><span
+            <div class="max-w-4xl text-center px-4">
+                <i class="fa-solid fa-rocket text-blue-500 text-6xl md:text-7xl mb-8"></i>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">Die KI-Evolution:<br><span
                         class="text-blue-500">Morgen arbeiten</span></h1>
-                <p class="text-2xl text-slate-300 font-light">Vom manuellen Kopieren zum autonomen Handeln.</p>
+                <p class="text-xl md:text-2xl text-slate-300 font-light">Vom manuellen Kopieren zum autonomen Handeln.
+                </p>
             </div>
         </div>
 
@@ -403,9 +484,9 @@
         <div class="slide" id="slide-1">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 md:gap-6">
                         <span class="stage-label" style="background-color: #334155;">Stufe 1</span>
-                        <h2 class="text-3xl font-bold text-white">Die manuelle Welt</h2>
+                        <h2 class="text-xl md:text-3xl font-bold text-white">Die manuelle Welt</h2>
                     </div>
                     <div class="description-box border-slate-500">
                         Wir sind das "Bindeglied" zwischen Systemen. Jede Information wird händisch gelesen, kopiert und
@@ -438,9 +519,9 @@
         <div class="slide" id="slide-2">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 md:gap-6">
                         <span class="stage-label" style="background-color: #854d0e;">Stufe 2</span>
-                        <h2 class="text-3xl font-bold text-white">Regeln & Automatisierung</h2>
+                        <h2 class="text-xl md:text-3xl font-bold text-white">Regeln & Automatisierung</h2>
                     </div>
                     <div class="description-box border-yellow-500">
                         Die Ära der Regeln. Programme erledigen Aufgaben nach festen Vorgaben ("Wenn-Dann"). Effizient,
@@ -477,9 +558,9 @@
         <div class="slide" id="slide-3">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 md:gap-6">
                         <span class="stage-label" style="background-color: #1e40af;">Stufe 3</span>
-                        <h2 class="text-3xl font-bold text-white">LLM: Das Gehirn im Glas</h2>
+                        <h2 class="text-xl md:text-3xl font-bold text-white">LLM: Das Gehirn im Glas</h2>
                     </div>
                     <div class="description-box border-blue-500">
                         Die KI versteht Sprache und Kontext. Als isoliertes "Gehirn" kann sie Texte perfekt analysieren,
@@ -516,9 +597,9 @@
         <div class="slide" id="slide-4">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 md:gap-6">
                         <span class="stage-label" style="background-color: #6b21a8;">Stufe 4</span>
-                        <h2 class="text-3xl font-bold text-white">Der KI-Agent: Hände & Füße</h2>
+                        <h2 class="text-xl md:text-3xl font-bold text-white">Der KI-Agent: Hände & Füße</h2>
                     </div>
                     <div class="description-box border-purple-500">
                         Vom Denken zum Handeln. Der Agent nutzt das LLM und Werkzeuge, um Aufträge autonom in Ihren
@@ -574,9 +655,9 @@
         <div class="slide" id="slide-5">
             <div class="slide-content-wrapper">
                 <div class="header-area">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 md:gap-6">
                         <span class="stage-label" style="background-color: #1e3a8a;">ChatGPT</span>
-                        <h2 class="text-3xl font-bold text-white">Der Agent im Sandkasten</h2>
+                        <h2 class="text-xl md:text-3xl font-bold text-white">Der Agent im Sandkasten</h2>
                     </div>
                     <div class="description-box border-blue-400">
                         ChatGPT ist bereits ein Agent mit Werkzeugen (Browsing, Analyse), arbeitet aber in einer
@@ -590,7 +671,7 @@
                     <div class="examples-grid">
                         <div class="example-card">
                             <span class="role-label" style="color: var(--accent-green)">Möglichkeiten</span>
-                            <ul class="text-sm space-y-2 mt-2">
+                            <ul class="text-xs space-y-2 mt-2">
                                 <li class="flex gap-2"><i class="fa-solid fa-globe text-blue-400"></i> Internet-Suche
                                     (Browsing)</li>
                                 <li class="flex gap-2"><i class="fa-solid fa-file-pdf text-blue-400"></i> Analyse
@@ -603,7 +684,7 @@
                         </div>
                         <div class="example-card">
                             <span class="role-label" style="color: var(--accent-red)">Die Grenze</span>
-                            <ul class="text-sm space-y-2 mt-2">
+                            <ul class="text-xs space-y-2 mt-2">
                                 <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Kein Zugriff auf
                                     interne E-Mails</li>
                                 <li class="flex gap-2"><i class="fa-solid fa-lock text-red-400"></i> Keine Änderung an
@@ -619,23 +700,23 @@
 
         <!-- Slide 6: Reasoning & ReAct -->
         <div class="slide" id="slide-6">
-            <div class="max-w-5xl w-full text-center">
-                <h2 class="text-4xl font-bold text-center mb-12 text-green-400">ReAct: Denken + Handeln am Beispiel
-                    Reiseplanung</h2>
-                <div class="grid grid-cols-3 gap-8">
-                    <div class="bg-slate-800/60 p-8 rounded-2xl border-t-4 border-green-500">
+            <div class="max-w-5xl w-full text-center px-4">
+                <h2 class="text-2xl md:text-4xl font-bold text-center mb-12 text-green-400">ReAct: Denken + Handeln am
+                    Beispiel Reiseplanung</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-green-500">
                         <h4 class="font-bold text-green-500 mb-2 text-lg text-center">1. Reasoning</h4>
                         <p class="text-sm text-slate-400 text-center leading-relaxed">Agent sammelt Daten aus
                             Richtlinien und Prompt. Er nutzt das LLM für die Erarbeitung eines Plans mit Teilschritten
                             und zur Abwägung von Alternativen.</p>
                     </div>
-                    <div class="bg-slate-800/60 p-8 rounded-2xl border-t-4 border-blue-500">
+                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-blue-500">
                         <h4 class="font-bold text-blue-500 mb-2 text-lg text-center">2. Acting</h4>
                         <p class="text-sm text-slate-400 text-center leading-relaxed">Agent nutzt Buchungstools für die
                             Buchung von Hotels und Zügen und sendet die Tickets an den Reisenden. Er nutzt das LLM
                             erneut für die Formulierung von Reiseplänen und Zusammenfassungen.</p>
                     </div>
-                    <div class="bg-slate-800/60 p-8 rounded-2xl border-t-4 border-purple-500">
+                    <div class="bg-slate-800/60 p-6 md:p-8 rounded-2xl border-t-4 border-purple-500">
                         <h4 class="font-bold text-purple-400 mb-2 text-lg text-center">3. Human In The Loop</h4>
                         <p class="text-sm text-slate-300 italic text-center leading-relaxed">Vor dem finalen Abschluss
                             der Buchung wird der Reisende um Bestätigung gebeten, ob der Plan so passt.</p>
@@ -646,8 +727,8 @@
 
         <!-- Slide 7: Zusammenfassung -->
         <div class="slide" id="slide-7">
-            <h2 class="text-3xl font-bold text-center mb-6 text-white">Evolution im Überblick</h2>
-            <div class="max-w-5xl w-full">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-white px-4">Evolution im Überblick</h2>
+            <div class="max-w-5xl w-full px-4">
                 <div class="bracket-container mx-auto">
                     <div></div>
                     <div>
@@ -663,39 +744,46 @@
                     <table class="w-full text-left border-separate border-spacing-y-2">
                         <thead>
                             <tr class="text-slate-500 text-[0.6rem] uppercase tracking-widest bg-white/5">
-                                <th class="p-4 rounded-l-xl">Rolle</th>
-                                <th class="p-4 text-center">Stufe 1 (Hand)</th>
-                                <th class="p-4 text-center">Stufe 2 (Regel)</th>
-                                <th class="p-4 text-center rounded-r-xl">Stufe 4 (Agent)</th>
+                                <th class="p-2 md:p-4 rounded-l-xl">Rolle</th>
+                                <th class="p-2 md:p-4 text-center">Stufe 1 (Hand)</th>
+                                <th class="p-2 md:p-4 text-center">Stufe 2 (Regel)</th>
+                                <th class="p-2 md:p-4 text-center rounded-r-xl">Stufe 4 (Agent)</th>
                             </tr>
                         </thead>
-                        <tbody class="text-slate-300 text-xs">
+                        <tbody class="text-slate-300 text-[0.65rem] md:text-xs">
                             <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Vertrieb</td>
-                                <td class="p-4 text-center opacity-60">LinkedIn Kopieren</td>
-                                <td class="p-4 text-center opacity-60">Plugin Import</td>
-                                <td class="p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">CRM
-                                    Autopilot</td>
+                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Vertrieb
+                                </td>
+                                <td class="p-2 md:p-4 text-center opacity-60">LinkedIn Kopieren</td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Plugin Import</td>
+                                <td
+                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
+                                    CRM Autopilot</td>
                             </tr>
                             <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Controlling</td>
-                                <td class="p-4 text-center opacity-60">Taschenrechner</td>
-                                <td class="p-4 text-center opacity-60">Excel-Makros</td>
-                                <td class="p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
+                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Controlling
+                                </td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Taschenrechner</td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Excel-Makros</td>
+                                <td
+                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
                                     Live-Monitoring</td>
                             </tr>
                             <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Sekretariat</td>
-                                <td class="p-4 text-center opacity-60">Kalender-Blättern</td>
-                                <td class="p-4 text-center opacity-60">Buchungstools</td>
-                                <td class="p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
+                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Sekretariat
+                                </td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Kalender-Blättern</td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Buchungstools</td>
+                                <td
+                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
                                     Termin-Auto-Mgmt</td>
                             </tr>
                             <tr class="bg-white/5 hover:bg-white/10 transition-colors">
-                                <td class="p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Führung</td>
-                                <td class="p-4 text-center opacity-60">Ordner suchen</td>
-                                <td class="p-4 text-center opacity-60">Dashboards</td>
-                                <td class="p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
+                                <td class="p-2 md:p-4 font-bold rounded-l-xl border-l-2 border-blue-500/30">Führung</td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Ordner suchen</td>
+                                <td class="p-2 md:p-4 text-center opacity-60">Dashboards</td>
+                                <td
+                                    class="p-2 md:p-4 text-center rounded-r-xl text-purple-400 font-bold bg-purple-500/5">
                                     Assistenz-Agent</td>
                             </tr>
                         </tbody>
@@ -707,13 +795,14 @@
         <!-- Slide 8: Datenschutz -->
         <div class="slide" id="slide-8">
             <div
-                class="max-w-4xl mx-auto text-center border-l-8 border-red-500 bg-slate-900/40 p-12 rounded-3xl relative overflow-hidden">
-                <i class="fa-solid fa-user-shield absolute -right-10 -bottom-10 text-[200px] opacity-5"></i>
+                class="max-w-4xl mx-auto text-center border-l-8 border-red-500 bg-slate-900/40 p-8 md:p-12 rounded-3xl relative overflow-hidden">
+                <i
+                    class="fa-solid fa-user-shield absolute -right-10 -bottom-10 text-[150px] md:text-[200px] opacity-5"></i>
                 <div class="mb-8 relative z-10 text-center">
-                    <i class="fa-solid fa-shield-halved text-red-500 text-6xl mb-6"></i>
-                    <h2 class="text-4xl font-bold text-white">Datenschutz & Datenfluss</h2>
+                    <i class="fa-solid fa-shield-halved text-red-500 text-5xl md:text-6xl mb-6"></i>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Datenschutz & Datenfluss</h2>
                 </div>
-                <div class="grid grid-cols-2 gap-8 mb-8 relative z-10 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 relative z-10 text-center">
                     <div class="bg-red-500/10 p-6 rounded-xl border border-red-500/20">
                         <b class="text-red-400 block mb-2">Deine Prompts</b>
                         <p class="text-xs text-slate-400">Befehle und Texte, die Du direkt an die KI schickst.</p>
@@ -724,7 +813,7 @@
                         </p>
                     </div>
                 </div>
-                <p class="text-lg text-slate-300 relative z-10 leading-relaxed">
+                <p class="text-base md:text-lg text-slate-300 relative z-10 leading-relaxed">
                     ⚠️ <b>Wichtig:</b> Deine Daten verlassen Dein System, um vom LLM verarbeitet zu werden. Nutze für
                     sensible Daten nur offiziell freigegebene LLMs.
                 </p>
@@ -816,9 +905,9 @@
                         lastScrollTime = now;
                     }
                 }
-                e.preventDefault(); // Verhindert Browser-Back/Forward
+                // e.preventDefault() ist hier oft problematisch in iframes, daher weggelassen für bessere Kompatibilität
             }
-        }, { passive: false });
+        }, { passive: true });
 
         // 2. Touch-Geräte
         let touchStartX = 0;
