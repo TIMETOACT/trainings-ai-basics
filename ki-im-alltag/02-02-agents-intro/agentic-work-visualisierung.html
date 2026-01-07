@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulation: Vom LLM zum KI-Agenten</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel für JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Verhindert Pull-to-Refresh und Bouncing auf Mobile */
+        body {
+            margin: 0;
+            overflow: hidden;
+            overscroll-behavior: none;
+            background-color: #0f172a;
+        }
+
+        /* Custom Scrollbar für die Sidebar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Custom Icons Components ---
+        const IconBase = ({ children, size = 24, className = "" }) => (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={size}
+                height={size}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={className}
+            >
+                {children}
+            </svg>
+        );
+
+        const User = (props) => (
+            <IconBase {...props}>
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </IconBase>
+        );
+
+        const Mail = (props) => (
+            <IconBase {...props}>
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </IconBase>
+        );
+
+        const Database = (props) => (
+            <IconBase {...props}>
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+            </IconBase>
+        );
+
+        const Brain = (props) => (
+            <IconBase {...props}>
+                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
+                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+            </IconBase>
+        );
+
+        const Bot = (props) => (
+            <IconBase {...props}>
+                <rect width="18" height="10" x="3" y="11" rx="2" />
+                <circle cx="12" cy="5" r="2" />
+                <path d="M12 7v4" />
+                <line x1="8" x2="8" y1="16" y2="16" />
+                <line x1="16" x2="16" y1="16" y2="16" />
+            </IconBase>
+        );
+
+        const ArrowRight = (props) => (
+            <IconBase {...props}>
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+            </IconBase>
+        );
+
+        const CheckCircle = (props) => (
+            <IconBase {...props}>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </IconBase>
+        );
+
+        const Monitor = (props) => (
+            <IconBase {...props}>
+                <rect width="20" height="14" x="2" y="3" rx="2" />
+                <line x1="8" x2="16" y1="21" y2="21" />
+                <line x1="12" x2="12" y1="17" y2="21" />
+            </IconBase>
+        );
+
+        const Play = (props) => (
+            <IconBase {...props}>
+                <polygon points="5 3 19 12 5 21 5 3" />
+            </IconBase>
+        );
+
+        const Settings = (props) => (
+            <IconBase {...props}>
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+            </IconBase>
+        );
+
+        const Info = (props) => (
+            <IconBase {...props}>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+            </IconBase>
+        );
+
+        const App = () => {
+            const [hasStarted, setHasStarted] = useState(false);
+            const [activeTab, setActiveTab] = useState(1);
+            const [step, setStep] = useState(0);
+            const [isAnimating, setIsAnimating] = useState(false);
+            const stepsEndRef = useRef(null);
+
+            // Optimierte Positionen für Mobile:
+            // System und Email wieder leicht nach oben (35%), da wir den Bereich vergrößert haben.
+            // Das schafft mehr Abstand zu ChatGPT/Agent (unten).
+            const positions = {
+                desk: { top: '75%', left: '50%' },
+                system: { top: '35%', left: '20%' },
+                email: { top: '35%', left: '80%' },
+                ai: { top: '75%', left: '80%' },
+            };
+
+            const scenarios = {
+                1: {
+                    title: "Manuell",
+                    description: "Der User macht alles selbst. Hoher manueller Aufwand und viele Laufwege.",
+                    steps: [
+                        {
+                            text: "Start: Du sitzt arbeitsbereit an deinem Schreibtisch.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            action: "Arbeitstag beginnen"
+                        },
+                        {
+                            text: "Posteingang: Eine neue Kunden-Email ist eingegangen!",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Ding! Neue Mail.",
+                            action: "Email lesen"
+                        },
+                        {
+                            text: "Outlook: Du liest die E-Mail. Der Kunde schreibt: 'Wo bleibt meine Bestellung #123?'.",
+                            userPos: 'email',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Kunde: Wo ist #123?",
+                            action: "Zum ERP laufen"
+                        },
+                        {
+                            text: "Recherche: Du stehst am ERP-System und prüfst den Status.",
+                            userPos: 'system',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Suche #123... Ah, Status: Versandt!",
+                            action: "Direkt zu Outlook"
+                        },
+                        {
+                            text: "Medienbruch: Mit dem Status im Kopf ('Versandt') gehst du direkt rüber zu Outlook.",
+                            userPos: 'email',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            action: "Antwort tippen"
+                        },
+                        {
+                            text: "Manuelle Arbeit: Du tippst mühsam: 'Sehr geehrter Kunde...'",
+                            userPos: 'email',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Tipp tipp tipp... (Puh, anstrengend)",
+                            action: "Senden"
+                        },
+                        {
+                            text: "Fertig. Viel Laufarbeit, hohe Fehleranfälligkeit.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            isDone: true,
+                            action: "Abschluss"
+                        }
+                    ]
+                },
+                2: {
+                    title: "Mit LLM",
+                    description: "Der User nutzt KI zum Texten, muss aber die Daten selbst als 'Kurier' transportieren.",
+                    steps: [
+                        {
+                            text: "Start: Du bist bereit, KI als Hilfsmittel zu nutzen.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            action: "Arbeitstag beginnen"
+                        },
+                        {
+                            text: "Posteingang: Eine neue E-Mail kommt rein. Du weißt noch nicht, worum es geht.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Ding! Neue Mail.",
+                            action: "Email lesen"
+                        },
+                        {
+                            text: "Outlook: Du liest die E-Mail. Der Kunde schreibt: 'Wo bleibt meine Bestellung #123?'.",
+                            userPos: 'email',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Kunde: Wo ist #123?",
+                            action: "Zum ERP laufen"
+                        },
+                        {
+                            text: "Recherche: Du suchst den Status manuell im System.",
+                            userPos: 'system',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Status: Versandt. (Merken!)",
+                            action: "Direkt zu ChatGPT"
+                        },
+                        {
+                            text: "Prompting: Mit den Fakten im Kopf wechselst du zu ChatGPT. Du musst Rolle, Format und die Daten eingeben.",
+                            userPos: 'ai', // User interagiert mit AI
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Prompt: '...Bestellung #123 ist versandt...'",
+                            action: "Prompt schreiben"
+                        },
+                        {
+                            text: "Generierung: Die KI liefert den perfekten Text. Du kopierst ihn.",
+                            userPos: 'ai',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Text kopiert!",
+                            action: "Text kopieren"
+                        },
+                        {
+                            text: "Transfer: Du trägst den Text rüber zu Outlook.",
+                            userPos: 'email',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            bubble: "Einfügen & Senden",
+                            action: "Zu Outlook & Senden"
+                        },
+                        {
+                            text: "Fertig. Text war gut, aber du warst die Schnittstelle.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: false,
+                            isDone: true,
+                            action: "Abschluss"
+                        }
+                    ]
+                },
+                3: {
+                    title: "Mit Agent",
+                    description: "Der User delegiert. Der Agent arbeitet autonom über Systemgrenzen hinweg.",
+                    steps: [
+                        {
+                            text: "Vorbereitung: Der neue KI-Agent steht bereit. Bevor wir arbeiten, müssen wir ihn einmalig instruieren.",
+                            userPos: 'desk', // User startet am Schreibtisch
+                            agentPos: 'ai',
+                            showAgent: true,
+                            action: "Agenten präparieren"
+                        },
+                        {
+                            text: "Konfiguration: Du definierst den 'System Prompt': Rolle, Tonalität und Regeln.",
+                            userPos: 'ai', // User geht zum Agenten
+                            agentPos: 'ai',
+                            showAgent: true,
+                            bubble: "System: 'Sei höflich. Nutze ERP bei Fragen.'",
+                            action: "Einstellung speichern"
+                        },
+                        {
+                            text: "Start: Der Arbeitstag beginnt. Du gehst zurück an deinen Platz, der Agent ist bereit.",
+                            userPos: 'desk', // User geht zurück
+                            agentPos: 'ai', // Agent wartet an der Basis
+                            showAgent: true,
+                            action: "Arbeitstag beginnen"
+                        },
+                        {
+                            text: "Automatik: 'Ding!'. Der Agent überwacht den Posteingang und reagiert sofort automatisch auf die Anfrage zu #123.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: true,
+                            bubble: "Ding! Mail.",
+                            action: "Agent startet automatisch"
+                        },
+                        {
+                            text: "Analyse: Der Agent greift auf Outlook zu, liest die Mail und extrahiert die Bestellnummer #123.",
+                            userPos: 'desk', // User bleibt sitzen
+                            agentPos: 'email',
+                            showAgent: true,
+                            bubble: "Agent: Lese Mail... Aha, #123.",
+                            action: "Daten recherchieren"
+                        },
+                        {
+                            text: "Recherche: Der Agent prüft selbstständig den Status im ERP. Du bekommst davon gar nichts mit und arbeitest weiter.",
+                            userPos: 'desk', // User bleibt sitzen
+                            agentPos: 'system',
+                            showAgent: true,
+                            bubble: "Agent: Suche #123... Versandt.",
+                            action: "Entwurf erstellen"
+                        },
+                        {
+                            text: "Entwurf & Human-in-the-Loop: Der Agent erstellt den Entwurf und benachrichtigt dich erst jetzt zur Freigabe.",
+                            userPos: 'desk',
+                            agentPos: 'email', // Agent ist beim Email System
+                            showAgent: true,
+                            bubble: "Agent: Entwurf fertig. Senden?",
+                            action: "Überprüfen"
+                        },
+                        {
+                            text: "Feedback: Du prüfst den Entwurf kurz. Da der Agent den Kontext kennt, passt alles.",
+                            userPos: 'desk',
+                            agentPos: 'email',
+                            showAgent: true,
+                            bubble: "Passt, senden!",
+                            action: "Freigabe erteilen"
+                        },
+                        {
+                            text: "Aktion: Der Agent sendet die E-Mail nun final ab.",
+                            userPos: 'desk',
+                            agentPos: 'email',
+                            showAgent: true,
+                            bubble: "Agent: Gesendet.",
+                            action: "Agent berichtet"
+                        },
+                        {
+                            text: "Bericht: Der Agent kehrt zur Basis zurück und meldet Erfolg.",
+                            userPos: 'desk',
+                            agentPos: 'ai', // Agent geht zurück zur Basis
+                            showAgent: true,
+                            bubble: "Agent: Erledigt!",
+                            action: "Abschluss"
+                        },
+                        {
+                            text: "Fertig. Maximale Effizienz durch Automatisierung.",
+                            userPos: 'desk',
+                            agentPos: 'ai',
+                            showAgent: true,
+                            isDone: true,
+                            action: "Abschluss"
+                        }
+                    ]
+                }
+            };
+
+            const currentScenario = scenarios[activeTab];
+            const currentStepData = currentScenario.steps[step];
+
+            useEffect(() => {
+                if (stepsEndRef.current) {
+                    stepsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, [step, activeTab]);
+
+            const handleNext = () => {
+                if (step < currentScenario.steps.length - 1) {
+                    setIsAnimating(true);
+                    setStep(step + 1);
+                    setTimeout(() => setIsAnimating(false), 600);
+                }
+            };
+
+            const handleNextScenario = () => {
+                if (activeTab < 3) {
+                    setActiveTab(activeTab + 1);
+                    setStep(0);
+                }
+            };
+
+            const handleTabChange = (tabId) => {
+                setActiveTab(tabId);
+                setStep(0);
+            };
+
+            const jumpToStep = (index) => {
+                if (index <= step && !isAnimating) {
+                    setStep(index);
+                }
+            };
+
+            const getPosStyle = (posKey) => {
+                const p = positions[posKey];
+                return { top: p.top, left: p.left };
+            };
+
+            if (!hasStarted) {
+                return (
+                    // H-screen korrigiert zu h-[100dvh] für Mobile Browser
+                    <div className="flex flex-col h-[100dvh] bg-slate-950 font-sans text-slate-100 items-center justify-center p-4">
+                        <div className="max-w-2xl w-full bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-6 md:p-8 text-center relative overflow-hidden flex flex-col max-h-full overflow-y-auto">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+
+                            <div className="flex justify-center mb-6 space-x-4 flex-shrink-0 mt-4">
+                                <Monitor size={40} className="text-blue-400 md:w-12 md:h-12" />
+                                <ArrowRight size={40} className="text-slate-600 md:w-12 md:h-12" />
+                                <Bot size={40} className="text-purple-400 md:w-12 md:h-12" />
+                            </div>
+
+                            {/* Titel: Strahlend Weiß für maximalen Kontrast */}
+                            <h1 className="text-2xl md:text-4xl font-bold mb-4 text-white flex-shrink-0">
+                                Vom LLM zum KI-Agenten
+                            </h1>
+
+                            <p className="text-sm md:text-xl text-slate-300 mb-6 md:mb-8 leading-relaxed flex-shrink-0">
+                                Erlebe in dieser interaktiven Simulation, wie sich die Arbeit verändert:
+                                Vom stressigen manuellen "Turnschuh-Admin" zum effizienten KI-Manager.
+                            </p>
+
+                            <div className="bg-slate-800 rounded-xl p-4 md:p-6 mb-6 md:mb-8 text-left border border-slate-700 flex-shrink-0">
+                                <h3 className="text-base md:text-lg font-semibold text-slate-200 mb-2">Das Szenario:</h3>
+                                <p className="text-xs md:text-base text-slate-400">
+                                    Ein Kunde fragt per E-Mail nach dem Status seiner Bestellung <span className="text-blue-400 font-mono">#123</span>.
+                                    Der Status ist im internen ERP-System zu finden.
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => setHasStarted(true)}
+                                className="group relative inline-flex items-center justify-center px-6 py-3 md:px-8 md:py-4 font-bold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-500 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 focus:ring-offset-slate-900 text-sm md:text-base flex-shrink-0 mb-4"
+                            >
+                                <Play className="mr-2 fill-current" size={20} />
+                                Simulation starten
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                // H-screen korrigiert zu h-[100dvh] für Mobile Browser
+                <div className="flex flex-col h-[100dvh] bg-slate-950 font-sans text-slate-200 overflow-hidden">
+
+                    {/* Header */}
+                    <div className="bg-slate-900 shadow-md border-b border-slate-800 p-2 md:p-4 z-10 flex-shrink-0">
+                        <div className="flex justify-between items-center mb-1 md:mb-2">
+                            {/* Titel: Strahlend Weiß */}
+                            <h1 className="text-base md:text-2xl font-bold text-white truncate pr-2">
+                                KI-Workflow-Simulation
+                            </h1>
+                            <button onClick={() => setHasStarted(false)} className="text-[10px] md:text-xs text-slate-500 hover:text-slate-300 whitespace-nowrap">Startseite</button>
+                        </div>
+
+                        <div className="flex justify-center md:justify-start gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
+                            {[1, 2, 3].map((num) => (
+                                <button
+                                    key={num}
+                                    onClick={() => handleTabChange(num)}
+                                    className={`whitespace-nowrap px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all duration-200 flex-shrink-0 flex items-center gap-2 ${activeTab === num
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 border border-slate-700'
+                                        }`}
+                                >
+                                    <span className={`flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded-full text-[10px] font-bold ${activeTab === num ? 'bg-white text-blue-600' : 'bg-slate-700 text-slate-300'}`}>
+                                        {num}
+                                    </span>
+                                    <span>{scenarios[num].title}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Responsive Layout Container */}
+                    <div className="flex-grow flex flex-col md:flex-row gap-2 md:gap-4 p-2 md:p-4 overflow-hidden min-h-0">
+
+                        {/* Simulation Canvas Area */}
+                        {/* Mobile: Höhe erhöht (h-64 = 256px), damit Elemente vertikal entzerrt werden können. Desktop: Flex-1 */}
+                        <div className="flex-none h-64 md:h-auto md:flex-1 relative bg-slate-900 rounded-xl border border-slate-700 shadow-2xl overflow-hidden order-1">
+
+                            {/* Description Overlay - Z-Index 30 */}
+                            <div className="absolute top-2 left-2 right-2 z-30 pointer-events-none">
+                                <div className="bg-slate-800/90 border-l-4 border-blue-500 rounded p-2 md:p-3 shadow-lg backdrop-blur-sm pointer-events-auto">
+                                    <div className="flex items-start gap-2">
+                                        <Info className="text-blue-400 flex-shrink-0 mt-0.5" size={16} />
+                                        <p className="text-slate-200 text-[10px] md:text-sm leading-snug">
+                                            {currentScenario.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Game Field */}
+                            <div className="w-full h-full relative">
+                                {/* Stations */}
+                                {/* User Desk */}
+                                <div className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center transition-all duration-300" style={getPosStyle('desk')}>
+                                    <div className="w-12 h-12 md:w-24 md:h-24 bg-slate-800 rounded-full border-4 border-slate-600 flex items-center justify-center shadow-lg transition-all duration-300">
+                                        <Monitor className="text-slate-400 w-5 h-5 md:w-10 md:h-10" />
+                                    </div>
+                                    <span className="mt-1 md:mt-2 text-[10px] md:text-sm font-bold text-slate-400 bg-slate-900/90 px-2 py-0.5 rounded-full border border-slate-700">Platz</span>
+                                </div>
+
+                                {/* System / ERP */}
+                                <div className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center transition-all duration-300" style={getPosStyle('system')}>
+                                    <div className="w-12 h-12 md:w-20 md:h-20 bg-emerald-900/30 rounded-lg border-4 border-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-900/20 transition-all duration-300">
+                                        <Database className="text-emerald-500 w-5 h-5 md:w-8 md:h-8" />
+                                    </div>
+                                    <span className="mt-1 md:mt-2 text-[10px] md:text-sm font-bold text-emerald-500 bg-slate-900/90 px-2 py-0.5 rounded-full border border-slate-700">ERP</span>
+                                </div>
+
+                                {/* Email / Outlook */}
+                                <div className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center transition-all duration-300" style={getPosStyle('email')}>
+                                    <div className="w-12 h-12 md:w-20 md:h-20 bg-sky-900/30 rounded-lg border-4 border-sky-700 flex items-center justify-center shadow-lg shadow-sky-900/20 transition-all duration-300">
+                                        <Mail className="text-sky-500 w-5 h-5 md:w-8 md:h-8" />
+                                    </div>
+                                    <span className="mt-1 md:mt-2 text-[10px] md:text-sm font-bold text-sky-500 bg-slate-900/90 px-2 py-0.5 rounded-full border border-slate-700">Outlook</span>
+                                </div>
+
+                                {/* AI Station */}
+                                {activeTab !== 1 && (
+                                    <div className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center transition-all duration-300" style={getPosStyle('ai')}>
+                                        <div className={`w-12 h-12 md:w-20 md:h-20 rounded-lg border-4 flex items-center justify-center shadow-lg transition-all duration-300 ${activeTab === 3 ? 'bg-purple-900/30 border-purple-600 shadow-purple-900/20' : 'bg-orange-900/30 border-orange-600 shadow-orange-900/20'}`}>
+                                            {activeTab === 3 ? <Bot className="text-purple-400 w-5 h-5 md:w-8 md:h-8" /> : <Brain className="text-orange-400 w-5 h-5 md:w-8 md:h-8" />}
+                                        </div>
+                                        {activeTab === 3 && (step === 1) && (
+                                            <div className="absolute -top-5 md:-top-8 animate-bounce text-purple-400">
+                                                <Settings className="w-4 h-4 md:w-6 md:h-6" />
+                                            </div>
+                                        )}
+                                        <span className={`mt-1 md:mt-2 text-[10px] md:text-sm font-bold bg-slate-900/90 px-2 py-0.5 rounded-full border border-slate-700 ${activeTab === 3 ? 'text-purple-400' : 'text-orange-400'}`}>
+                                            {activeTab === 3 ? 'Agent' : 'ChatGPT'}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Moving Characters */}
+                                {/* User Character - Z-INDEX 40 um über Info (Z-30) zu liegen */}
+                                <div
+                                    className="absolute transition-all duration-700 ease-in-out z-40 flex flex-col items-center"
+                                    style={{
+                                        ...getPosStyle(currentStepData.userPos),
+                                        transform: 'translate(-50%, -50%)'
+                                    }}
+                                >
+                                    <div className="w-8 h-8 md:w-12 md:h-12 bg-blue-600 rounded-full border-2 border-slate-200 shadow-xl flex items-center justify-center text-white ring-4 ring-blue-500/20">
+                                        <User className="w-4 h-4 md:w-6 md:h-6" />
+                                    </div>
+                                    {/* User Bubble */}
+                                    {currentStepData.bubble && !currentStepData.showAgent && (
+                                        <div className="absolute bottom-9 md:bottom-14 w-28 md:w-48 bg-slate-800 p-1.5 md:p-3 rounded-xl shadow-2xl border border-slate-600 text-[10px] md:text-xs text-center animate-bounce text-slate-200 z-50">
+                                            {currentStepData.bubble}
+                                            <div className="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-slate-800 border-r border-b border-slate-600 rotate-45"></div>
+                                        </div>
+                                    )}
+                                    {/* Special Bubble for User when Agent is present (Stage 3) */}
+                                    {currentStepData.bubble && currentStepData.showAgent && !currentStepData.bubble.startsWith("Agent") && !currentStepData.bubble.startsWith("System") && !currentStepData.bubble.startsWith("Ding") && (
+                                        <div className="absolute bottom-9 md:bottom-14 w-28 md:w-48 bg-slate-800 p-1.5 md:p-3 rounded-xl shadow-2xl border border-slate-600 text-[10px] md:text-xs text-center animate-bounce text-slate-200 z-50">
+                                            {currentStepData.bubble}
+                                            <div className="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-slate-800 border-r border-b border-slate-600 rotate-45"></div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Agent Character - Z-INDEX 40 um über Info (Z-30) zu liegen */}
+                                {currentStepData.showAgent && (
+                                    <div
+                                        className="absolute transition-all duration-700 ease-in-out z-40 flex flex-col items-center"
+                                        style={{
+                                            ...getPosStyle(currentStepData.agentPos),
+                                            transform: 'translate(-50%, -50%)'
+                                        }}
+                                    >
+                                        <div className="w-8 h-8 md:w-12 md:h-12 bg-purple-600 rounded-full border-2 border-slate-200 shadow-xl flex items-center justify-center text-white ring-4 ring-purple-500/20">
+                                            <Bot className="w-4 h-4 md:w-6 md:h-6" />
+                                        </div>
+                                        {/* Agent Bubble */}
+                                        {currentStepData.bubble && (currentStepData.bubble.startsWith("Agent") || currentStepData.bubble.startsWith("System") || currentStepData.bubble.startsWith("Ding")) && (
+                                            <div className="absolute bottom-9 md:bottom-14 w-28 md:w-48 bg-purple-900 p-1.5 md:p-3 rounded-xl shadow-2xl border border-purple-500 text-[10px] md:text-xs text-center font-semibold text-purple-100 animate-pulse z-50">
+                                                {currentStepData.bubble}
+                                                <div className="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-purple-900 border-r border-b border-purple-500 rotate-45"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                            </div>
+                        </div>
+
+                        {/* Sidebar: Step History */}
+                        {/* Mobile: Nimmt den REST der Höhe (flex-1) und erlaubt Scrollen (min-h-0) */}
+                        <div className="flex-1 md:w-80 md:flex-none flex-shrink-0 bg-slate-900 border border-slate-800 rounded-xl flex flex-col overflow-hidden shadow-xl order-2 min-h-0">
+                            <div className="p-2 md:p-3 border-b border-slate-800 bg-slate-900/50 flex-shrink-0">
+                                <h2 className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                    Ablauf ({step + 1} / {currentScenario.steps.length})
+                                </h2>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 md:space-y-3">
+                                {currentScenario.steps.map((s, index) => {
+                                    if (index > step) return null;
+                                    const isCurrent = index === step;
+                                    const isPast = index < step;
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            onClick={() => jumpToStep(index)}
+                                            className={`relative p-2 md:p-3 rounded-lg border text-xs md:text-sm cursor-pointer transition-all duration-200 ${isCurrent
+                                                ? 'bg-blue-900/20 border-blue-500 text-blue-100 shadow-md transform scale-102'
+                                                : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                                                }`}
+                                        >
+                                            <div className="flex items-start gap-2 md:gap-3">
+                                                <div className={`flex-shrink-0 w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold mt-0.5 ${isCurrent ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-400'
+                                                    }`}>
+                                                    {index + 1}
+                                                </div>
+                                                <div className="leading-snug">
+                                                    {s.text}
+                                                </div>
+                                            </div>
+                                            {isPast && (
+                                                <div className="absolute top-1 right-1 opacity-0 hover:opacity-100">
+                                                    <div className="text-[10px] bg-slate-700 text-white px-1.5 py-0.5 rounded">Zurück</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                                <div ref={stepsEndRef} />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Footer Control Panel */}
+                    <div className="bg-slate-900 border-t border-slate-800 p-3 md:p-6 flex flex-col items-center justify-center flex-shrink-0 z-50 pb-safe">
+
+                        <div className="w-full md:w-auto">
+                            {!currentStepData.isDone ? (
+                                <button
+                                    onClick={handleNext}
+                                    disabled={isAnimating}
+                                    className="group flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-base md:text-lg shadow-lg shadow-blue-900/40 transform transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full"
+                                >
+                                    {currentStepData.action}
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            ) : (
+                                activeTab < 3 ? (
+                                    <button
+                                        onClick={handleNextScenario}
+                                        className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-base md:text-lg shadow-lg shadow-purple-900/40 animate-pulse w-full"
+                                    >
+                                        Nächstes Szenario <ArrowRight className="w-5 h-5" />
+                                    </button>
+                                ) : (
+                                    <button
+                                        disabled
+                                        className="flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-base md:text-lg shadow-lg shadow-green-900/40 opacity-90 cursor-default w-full"
+                                    >
+                                        Simulation beendet <CheckCircle className="w-5 h-5" />
+                                    </button>
+                                )
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

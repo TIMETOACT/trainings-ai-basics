@@ -7,10 +7,10 @@ nav_order: 1
 
 # Übung (User Story): Die E-Mail-Eskalation
 
-Ich möchte als "Customer Success Manager" mithilfe der SAND-Methode eine professionelle Deeskalations-Mail schreiben, um einen verärgerten Kunden zu beruhigen, ohne viel Zeit zu verlieren.
+Ich möchte als "Customer Success Manager" eine professionelle Deeskalations-Mail schreiben, um einen verärgerten Kunden zu beruhigen, ohne viel Zeit zu verlieren.
 
 ## 🎯 Lernziele
-*   Du lernst, die SAND-Elemente (Situation, Aufgabe, Nebenbedingung, Darstellung) gezielt einzusetzen.
+*   Du lernst, die SANDWICH-Elemente gezielt einzusetzen.
 *   Du erkennst den Unterschied zwischen einem generischen ("Mach mal") und einem spezifischen Prompt.
 
 ## ✅ Definition of Done
