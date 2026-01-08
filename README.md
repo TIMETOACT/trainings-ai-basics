@@ -11,6 +11,7 @@ Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulun
 *   [Agentic Work](ki-im-alltag/02-02-agents-intro/agentic-work-visualisierung.html)
 *   [Agent Evolution](ki-im-alltag/02-02-agents-intro/agent-evolution-visualisierung/agent-evolution-visualisierung.html)
 *   [Agent Architecture](ki-im-alltag/02-04-prompt-injection/agent-architecture-visualisierung.html)
+*   [Outlook: Multi-Agenten](ki-im-alltag/02-07-outlook-multiagent/outlook-visualisierung/outlook-visualisierung.html)
 
 ### Übungen
 *   [Halluzinationen provozieren](ki-im-alltag/01-03-hallucination-exercise/issue.md)
