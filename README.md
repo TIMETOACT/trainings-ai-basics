@@ -4,26 +4,17 @@ Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulun
 
 ## KI im Alltag
 
-### 01-02 LLM Basics
-- [LLM Visualisierung](ki-im-alltag/01-02-llm-basics/llm-visualisierung.html)
+### Visualisierungen
+*   [LLM Funktionsweise](ki-im-alltag/01-02-llm-basics/llm-visualisierung.html)
+*   [Halluzinationen](ki-im-alltag/01-03-hallucination-exercise/hallucination-visualisierung.html)
+*   [Prompting Basics](ki-im-alltag/01-04-prompting-basics/prompting-visualisierung.html)
+*   [Agentic Work](ki-im-alltag/02-02-agents-intro/agentic-work-visualisierung.html)
+*   [Agent Evolution](ki-im-alltag/02-02-agents-intro/agent-evolution-visualisierung/agent-evolution-visualisierung.html)
+*   [Agent Architecture](ki-im-alltag/02-04-prompt-injection/agent-architecture-visualisierung.html)
 
-### 01-03 Hallucination Exercise
-- [Hallucination Visualisierung](ki-im-alltag/01-03-hallucination-exercise/hallucination-visualisierung.html)
-- [Übung](ki-im-alltag/01-03-hallucination-exercise/issue.md)
-
-### 01-04 Prompting Basics
-- [Prompting Visualisierung](ki-im-alltag/01-04-prompting-basics/prompting-visualisierung.html)
-
-### 01-05 Prompt Engineering Exercise
-- [Übung](ki-im-alltag/01-05-prompt-engineering-exercise/issue.md)
-
-### 01-06 Transfer
-- [Übung](ki-im-alltag/01-06-transfer/issue.md)
-
-### 02-02 Agents Intro
-- [Agent Architecture Visualisierung](ki-im-alltag/02-02-agents-intro/agent-architecture-visualisierung.html)
-- [Agent Evolution Visualisierung](ki-im-alltag/02-02-agents-intro/agent-evolution-visualisierung/agent-evolution-visualisierung.html)
-- [Agentic Work Visualisierung](ki-im-alltag/02-02-agents-intro/agentic-work-visualisierung.html)
-
-### 02-04 Agent Potentials
-- [Übung](ki-im-alltag/02-04-agent-potentials/issue.md)
+### Übungen
+*   [Halluzinationen provozieren](ki-im-alltag/01-03-hallucination-exercise/issue.md)
+*   [Prompt Engineering](ki-im-alltag/01-05-prompt-engineering-exercise/issue.md)
+*   [Transfer Tasks](ki-im-alltag/01-06-transfer/issue.md)
+*   [Prompt Injection Research](ki-im-alltag/02-04-prompt-injection/issue.md)
+*   [Agent Potentials](ki-im-alltag/02-05-agent-potentials/issue.md)
