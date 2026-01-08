@@ -27,6 +27,3 @@ Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulun
 
 ### 02-04 Agent Potentials
 - [Übung](ki-im-alltag/02-04-agent-potentials/issue.md)
-
-### 02-05 Build Helper
-- [Übung](ki-im-alltag/02-05-build-helper/issue.md)

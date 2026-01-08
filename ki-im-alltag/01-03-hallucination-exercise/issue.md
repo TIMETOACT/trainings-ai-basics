@@ -30,4 +30,5 @@ Ich möchte als kritischer Nutzer herausfinden, wo die Grenzen meines KI-Modells
 *   Wie sicher klang die Antwort des Modells?
 *   Hätte ich den Fehler erkannt, wenn ich kein Experte für das Thema wäre?
 *   Was bedeutet das für den Einsatz im Arbeitsalltag?
+*   Was bedeutet der Begriff "Bias" im Kontext von LLMs? (Achtung: Gemeint ist nicht der Parameter `n` bei der linearen Funktion!)
 
