@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
 
-<head>
-    <meta charset="UTF-8">
-    <title>{{ page.title | default: site.title }}</title>
-</head>
+{%- include head.html -%}
 
 <body>
 
@@ -12,23 +9,26 @@
         function copyMarkdown() {
             const markdown = {{ page.content | jsonify
         }};
-        navigator.clipboard.writeText(markdown)
-            .then(() => alert("Markdown wurde kopiert"))
-            .catch(err => alert("Fehler beim Kopieren"));
-    }
+        navigator.clipboard.writeText(markdown);
+      }
     </script>
 
-    <a href="#" onclick="copyMarkdown(); return false;">
-        Markdown kopieren
-    </a>
+    {%- include header.html -%}
 
-    <main>
-        {{ content }}
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+
+            <a href="#" class="copy-md-link" onclick="copyMarkdown(); return false;">
+                Markdown kopieren
+            </a>
+
+            <hr>
+
+            {{ content }}
+        </div>
     </main>
 
-    <hr>
-
-
+    {%- include footer.html -%}
 
 </body>
 
