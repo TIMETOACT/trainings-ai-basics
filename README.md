@@ -1,4 +1,6 @@
-# Schulungsunterlagen
+---
+title: Schulungsunterlagen
+---
 
 Diese Repository enthält Übungen und Visualisierungen zu KI-Grundlagen-Schulungen.
 

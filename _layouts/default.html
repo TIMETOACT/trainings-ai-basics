@@ -13,7 +13,7 @@
                 <a href="#" onclick="copyMarkdown(); return false;">
                     Markdown kopieren
                 </a>
-                <span id="copy-status" class="copy-status" aria-live="polite">
+                <span id="copy-status" class="copy-status" aria-live="polite" hidden>
                     Kopiert!
                 </span>
             </div>
@@ -29,8 +29,14 @@
         }};
         navigator.clipboard.writeText(markdown).then(() => {
             const status = document.getElementById("copy-status");
+
+            status.hidden = false;
             status.classList.add("visible");
-            setTimeout(() => status.classList.remove("visible"), 1500);
+
+            setTimeout(() => {
+                status.classList.remove("visible");
+                status.hidden = true;
+            }, 1500);
         });
       }
     </script>
